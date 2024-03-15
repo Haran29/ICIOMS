@@ -13,9 +13,34 @@ const SignUpPage = () => {
     password: "",
   });
 
+  const validateEmail = (email) => {
+    // Regular expression for email validation
+    const re = /\S+@\S+\.\S+/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  const validateContact = (contact) => {
+    // Regular expression for 10-digit phone number validation
+    const re = /^\d{10}$/;
+    return re.test(contact);
+  };
+
   const registerUser = async (e) => {
     e.preventDefault();
     const { name, email, contact, password } = data;
+
+    // Check if email is valid
+    if (!validateEmail(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    // Check if contact number is valid
+    if (!validateContact(contact)) {
+      toast.error("Please enter a valid 10-digit contact number.");
+      return;
+    }
+
     try {
       const response = await axios.post("/SignUpPage", {
         name,
@@ -40,7 +65,7 @@ const SignUpPage = () => {
       {/* Content Section - Signup Form */}
       <div className="flex-1 bg-white flex items-center justify-center">
         <div className="max-w-sm">
-        <h2 className="text-2xl font-semibold mb-6">Sign up</h2> {/* "Sign In" label */}
+          <h2 className="text-2xl font-semibold mb-6">Sign up</h2>
           {/* Signup Form */}
           <form action="" onSubmit={registerUser}>
             <label htmlFor="Name" className="block mb-2">
@@ -92,7 +117,6 @@ const SignUpPage = () => {
               onChange={(e) => setData({ ...data, password: e.target.value })}
               className="w-full pb-1 mb-4 border-b border-gray-300 focus:outline-none"
               required
-              
             />
 
             <button

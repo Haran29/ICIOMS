@@ -2,7 +2,7 @@ import React from "react";
 import LoginPage from "./pages/LoginPage";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import SignUpPage from "./pages/SignUpPage";
+import SignUpPage from "./pages/SignUp";
 import OrderOnlinePage from "./pages/OrderOnlinePage";
 import OurMenu from "./pages/OurMenu";
 import AboutUs from "./pages/AboutUs";
@@ -15,13 +15,12 @@ import { Toaster } from "react-hot-toast";
 import UserProvider from "../context/userContext";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
+
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
 const App = () => {
   const { user } = useContext(UserContext);
-
-  console.log(user);
   return (
     <>
       <UserProvider>

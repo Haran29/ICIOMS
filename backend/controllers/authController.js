@@ -2,6 +2,7 @@
 const jwt = require("jsonwebtoken");
 const { response } = require("express");
 const User = require("../models/user");
+require('dotenv').config();
 const { hashPassword, comparePassword } = require("../helpers/auth");
 const secretKey = process.env.SECRET_KEY;
 

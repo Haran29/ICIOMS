@@ -2,14 +2,17 @@
 
 const express = require("express");
 const cors = require("cors");
-const app = express();
+const authRoutes = require("./routes/authRoutes");
 const mongoose = require("mongoose");
 require('dotenv').config();
 const cookieParser = require("cookie-parser");
 const mongoUrl = process.env.MONGO_URL;
 
+
+const app = express();
+
 mongoose
-  .connect(mongoUrl )
+  .connect(mongoUrl)
   .then(() => console.log("Database Connected"))
   .catch((err) => console.log("Database not connected", err));
 
@@ -23,7 +26,6 @@ app.use(
 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
-const authRoutes = require("./routes/authRoutes");
 app.use("/", authRoutes);
 
 const Port = 8000;
