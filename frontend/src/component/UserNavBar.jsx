@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaShoppingCart, FaUser } from "react-icons/fa"; // Importing FontAwesome cart and user icons
+import { FaShoppingCart, FaUser } from "react-icons/fa"; 
 
 const UserNavBar = () => {
   const Navigate = useNavigate();

@@ -36,7 +36,7 @@ const addToCart = async (req, res) => {
     // Save the cart item to the database
     await cartItem.save();
 
-    // Assuming the response would contain some confirmation or updated cart data
+   
     res.json({ message: 'Item added to cart successfully' });
   } catch (error) {
     console.error('Error adding item to cart:', error);
@@ -57,7 +57,7 @@ const getcartitems = async (req, res) => {
   }
 }
 
-// Assuming you have already set up your routes and controllers for managing cart items
+
 
 // Update quantity of an individual item in the cart
 const updateCartItemQuantity = async (req, res) => {
