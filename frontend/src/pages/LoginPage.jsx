@@ -24,12 +24,17 @@ const LoginPage = () => {
       } else {
         toast.success("Successfully Logged in");
         setData({ email: "", password: "" });
-        Navigate("/Dashboard");
+        // Assuming user object is returned from the server upon successful login
+        const user = response.data;
+        // Now you can do something with the user object, like storing it in sessionStorage
+        sessionStorage.setItem('user', JSON.stringify(user));
+        Navigate("/HomePage");
       }
     } catch (error) {
       console.log(error);
     }
   };
+  
 
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden ">

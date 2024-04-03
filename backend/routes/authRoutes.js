@@ -3,6 +3,9 @@
 const express = require("express");
 const router = express.Router();
 const { addItem, deleteItem, updateItem ,getmenuItem } = require('../controllers/itemController');
+const { addToCart ,getcartitems,updateCartItemQuantity,
+  deleteCartItem,
+  clearCart} = require('../controllers/cartController');
 
 const {
   test,
@@ -28,5 +31,11 @@ router.delete('/delete-item/:id', deleteItem);
 // Update Item Route
 router.put('/update-item/:id', updateItem);
 
+
+router.post('/add-to-cart',addToCart)
+router.get('/get-cart-items/:userId',getcartitems );
+router.put('/cart/updateQuantity', updateCartItemQuantity);
+router.delete('/cart/deleteItem', deleteCartItem);
+router.delete('/cart/clear/:userId', clearCart);
 module.exports = router;
 
