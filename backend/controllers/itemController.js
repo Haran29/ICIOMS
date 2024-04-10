@@ -3,31 +3,56 @@ const Item = require("../models/item");
 
 const addItem = async (req, res) => {
   try {
-    const { name, price, image } = req.body;
+    const { name, flavor, quantity, price, image, expiryDate, productDescription } = req.body;
     if (!name) {
       return res.json({
-        error: "name is required",
+        error: "Name is required",
+      });
+    }
+    if (!flavor) {
+      return res.json({
+        error: "Flavor is required",
+      });
+    }
+    if (!quantity) {
+      return res.json({
+        error: "Quantity is required",
       });
     }
     if (!price) {
       return res.json({
-        error: "price is required",
+        error: "Price is required",
       });
     }
     if (!image) {
       return res.json({
-        error: "image is required",
+        error: "Image is required",
       });
     }
-    const newItem = await Item.create({ name, price, image });
+    if (!expiryDate) {
+      return res.json({
+        error: "Expiry date is required",
+      });
+    }
+    if (!productDescription) {
+      return res.json({
+        error: "Product description is required",
+      });
+    }
+    const newItem = await Item.create({
+      name,
+      flavor,
+      quantity,
+      price,
+      image,
+      expiryDate,
+      productDescription,
+    });
     res.json({ message: "Item added successfully", newItem });
   } catch (error) {
     res.status(500).json({ error: "Failed to add item" });
   }
 };
-
-
-
 
 const deleteItem = async (req, res) => {
   try {
@@ -45,10 +70,10 @@ const deleteItem = async (req, res) => {
 const updateItem = async (req, res) => {
   try {
     const itemId = req.params.id;
-    const { name, price, image } = req.body;
+    const { name, flavor, quantity, price, image, expiryDate, productDescription } = req.body;
     const updatedItem = await Item.findByIdAndUpdate(
       itemId,
-      { name, price, image },
+      { name, flavor, quantity, price, image, expiryDate, productDescription },
       { new: true }
     );
     if (!updatedItem) {
@@ -60,13 +85,29 @@ const updateItem = async (req, res) => {
   }
 };
 
-const getmenuItem = async (req, res) => {
+const getMenuItem = async (req, res) => {
   try {
-    const menuItems = await Item.find();
-    res.json(menuItems); // Send menuItems as the response
+    const { flavor } = req.query;
+    let menuItems;
+    if (flavor) {
+      menuItems = await Item.find({ flavor });
+    } else {
+      menuItems = await Item.find();
+    }
+    res.json(menuItems);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch menu items" });
   }
 };
 
-module.exports = { addItem, deleteItem, updateItem ,getmenuItem };
+
+const generateReport = async (req, res) => {
+  try {
+    const allItems = await Item.find();
+    res.json(allItems);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to generate report" });
+  }
+};
+
+module.exports = { addItem, deleteItem, updateItem, getMenuItem, generateReport };
