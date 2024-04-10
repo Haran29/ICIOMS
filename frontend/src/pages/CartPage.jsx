@@ -11,9 +11,9 @@ const CartItem = ({ cartItem, updateQuantity, removeItem }) => (
     </div>
     <div className="flex items-center ml-auto space-x-2">
       <p className="text-sm text-gray-600">${cartItem.itemId.price * cartItem.quantity}</p>
-      <button onClick={() => updateQuantity(cartItem._id, cartItem.quantity - 1)} className="btn btn-sm">-</button>
-      <button onClick={() => updateQuantity(cartItem._id, cartItem.quantity + 1)} className="btn btn-sm">+</button>
-      <button onClick={() => removeItem(cartItem._id)} className="btn btn-sm text-red-500"><FaTrashAlt /></button>
+      <button onClick={() => updateQuantity(cartItem._id, cartItem.quantity - 1)} className="btn btn-sm btn-blue">-</button>
+      <button onClick={() => updateQuantity(cartItem._id, cartItem.quantity + 1)} className="btn btn-sm btn-blue">+</button>
+      <button onClick={() => removeItem(cartItem._id)} className="btn btn-sm btn-red"><FaTrashAlt /></button>
     </div>
   </div>
 );
@@ -23,22 +23,50 @@ const CheckoutForm = ({ phoneNumber, setPhoneNumber, postalCode, setPostalCode, 
     <h2 className="text-3xl font-semibold mb-6">Checkout</h2>
     <div className="mb-4">
       <label htmlFor="phoneNumber" className="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
-      <input type="text" id="phoneNumber" className="input" placeholder="Phone Number" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} />
+      <input
+        type="text"
+        id="phoneNumber"
+        className="input"
+        placeholder="Phone Number"
+        value={phoneNumber}
+        onChange={(e) => setPhoneNumber(e.target.value)}
+      />
     </div>
     <div className="mb-4">
       <label htmlFor="postalCode" className="block text-gray-700 text-sm font-bold mb-2">Postal Code</label>
-      <input type="text" id="postalCode" className="input" placeholder="Postal Code" value={postalCode} onChange={e => setPostalCode(e.target.value)} />
+      <input
+        type="text"
+        id="postalCode"
+        className="input"
+        placeholder="Postal Code"
+        value={postalCode}
+        onChange={(e) => setPostalCode(e.target.value)}
+      />
     </div>
     <div className="mb-4">
       <label htmlFor="city" className="block text-gray-700 text-sm font-bold mb-2">City</label>
-      <input type="text" id="city" className="input" placeholder="City" value={city} onChange={e => setCity(e.target.value)} />
+      <input
+        type="text"
+        id="city"
+        className="input"
+        placeholder="City"
+        value={city}
+        onChange={(e) => setCity(e.target.value)}
+      />
     </div>
     <div className="mb-4">
       <label htmlFor="streetAddress" className="block text-gray-700 text-sm font-bold mb-2">Street Address</label>
-      <input type="text" id="streetAddress" className="input" placeholder="Street Address" value={streetAddress} onChange={e => setStreetAddress(e.target.value)} />
+      <input
+        type="text"
+        id="streetAddress"
+        className="input"
+        placeholder="Street Address"
+        value={streetAddress}
+        onChange={(e) => setStreetAddress(e.target.value)}
+      />
     </div>
     <div className="text-center">
-      <button onClick={handlePayment} className="btn btn-blue">Pay</button>
+      <button onClick={handlePayment} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg ">Pay</button>
     </div>
   </div>
 );
@@ -122,7 +150,7 @@ const CartPage = () => {
               />
             ))}
             <div className="flex justify-end mt-4">
-              <button onClick={clearCart} className="btn btn-green">Clear Cart</button>
+              <button onClick={clearCart} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg">Clear Cart</button>
             </div>
             <div className="mt-4 text-right">
               <p className="text-xl font-semibold">Overall Total: ${calculateOverallTotal()}</p>

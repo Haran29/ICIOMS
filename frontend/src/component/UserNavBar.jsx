@@ -60,13 +60,14 @@ const UserNavBar = () => {
             </li>
           </ul>
         </div>
-        <div className="flex items-center space-x-3">
-          <Link to="/CartPage" className="text-black hover:text-green-600">
+        <div className="flex items-center space-x-3 ml-auto">
+        <Link to="/CartPage" className="text-black hover:text-green-600" style={{ marginRight: "10px" }}>
             <FaShoppingCart /> {/* Cart icon */}
           </Link>
-          <Link to="/UserProfile" className="text-black hover:text-green-600" style={{ marginRight: "10px" }}>
+          <Link to="/UserProfile" className="text-black hover:text-green-600">
             <FaUser onClick={handleLogout}/> {/* Profile icon */}
           </Link>
+          
         </div>
       </div>
     </nav>

@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaTrashAlt } from 'react-icons/fa';
+import { FaTrashAlt, FaSearch } from 'react-icons/fa';
 
 const OrderConsole = () => {
   const [inventory, setInventory] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchInventory();
   }, []);
 
   useEffect(() => {
-    // Calculate overall total when selected items change
     calculateOverallTotal();
   }, [selectedItems]);
 
@@ -22,6 +22,10 @@ const OrderConsole = () => {
     } catch (error) {
       console.error('Failed to fetch inventory:', error);
     }
+  };
+
+  const handleSearch = event => {
+    setSearchTerm(event.target.value);
   };
 
   const addToSelectedItems = (itemId) => {
@@ -66,6 +70,11 @@ const OrderConsole = () => {
     // Implement payment logic here
   };
 
+  // Filter inventory based on search term
+  const filteredInventory = inventory.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="max-w-5xl w-full p-8 bg-white rounded-lg shadow-lg">
@@ -73,8 +82,19 @@ const OrderConsole = () => {
           {/* Inventory */}
           <div className="w-3/5 pr-8">
             <h2 className="text-3xl font-semibold mb-6">Inventory</h2>
+            {/* Search Bar */}
+            <div className="mb-4 relative">
+              <input
+                type="text"
+                placeholder="Search inventory..."
+                className="w-full border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:border-blue-500"
+                value={searchTerm}
+                onChange={handleSearch}
+              />
+              <FaSearch className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500" />
+            </div>
             <div className="grid grid-cols-2 gap-8">
-              {inventory.map(item => (
+              {filteredInventory.map(item => (
                 <div key={item._id} className="flex flex-col items-center cursor-pointer" onClick={() => addToSelectedItems(item._id)}>
                   <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-lg mb-2" />
                   <div className="text-center">
@@ -87,7 +107,7 @@ const OrderConsole = () => {
           </div>
           {/* Selected Items */}
           <div className="w-2/5">
-            <h2 className="text-3xl font-semibold mb-6">Current Order</h2>
+            <h2 className="text-3xl font-semibold mb-6"> Order</h2>
             {selectedItems.map(item => (
               <div key={item._id} className="flex items-center mb-6 border-b pb-4">
                 <img src={item.image} alt={item.name} className="w-16 h-16 mr-4 rounded-lg shadow" />
@@ -103,7 +123,7 @@ const OrderConsole = () => {
             {selectedItems.length > 0 && (
               <div>
                 <p className="text-right mb-2">Overall Total: ${calculateOverallTotal()}</p>
-                <button onClick={handlePay} className="btn btn-blue">Pay Now</button>
+                <button  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg"onClick={handlePay} >Pay Now</button>
               </div>
             )}
           </div>

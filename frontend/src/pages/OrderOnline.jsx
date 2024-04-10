@@ -1,13 +1,17 @@
+// OrderOnlinePage.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaSearch } from "react-icons/fa"; // Import search icon
 
-const OrderOnlinePage = () => {
+const OrderOnline = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [menuItems, setMenuItems] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [userLocation, setUserLocation] = useState("");
+  const desiredLocation = "desiredLocation"; // Define the desired location here
 
   useEffect(() => {
+    fetchUserLocation();
     fetchMenuItems();
     const user = JSON.parse(sessionStorage.getItem("user"));
     if (user && user._id) {
@@ -15,27 +19,49 @@ const OrderOnlinePage = () => {
     }
   }, []);
 
+  const fetchUserLocation = async () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            const response = await axios.post("/api/get-user-location", { latitude, longitude });
+            setUserLocation(response.data.location);
+          } catch (error) {
+            console.error("Error fetching user location:", error);
+          }
+        },
+        (error) => {
+          console.error("Error getting user location:", error.message);
+        }
+      );
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+  };
+
   const fetchMenuItems = async () => {
     try {
       const response = await axios.get("/get-menuItem");
-      // Initialize quantity property for each menu item
-      const updatedMenuItems = response.data.map(item => ({ ...item, quantity: 0 }));
+      const updatedMenuItems = response.data.map((item) => ({
+        ...item,
+        quantity: 0,
+      }));
       setMenuItems(updatedMenuItems);
     } catch (error) {
       console.error("Failed to fetch menu items:", error);
     }
   };
 
-  const handleSearch = event => {
+  const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const addToCart = async itemId => {
+  const addToCart = async (itemId) => {
     try {
       const response = await axios.post("/add-to-cart", { itemId, userId });
       console.log("Item added to cart:", response.data);
-      // Update the quantity of the item in the state
-      const updatedMenuItems = menuItems.map(item =>
+      const updatedMenuItems = menuItems.map((item) =>
         item._id === itemId ? { ...item, quantity: item.quantity + 1 } : item
       );
       setMenuItems(updatedMenuItems);
@@ -44,13 +70,12 @@ const OrderOnlinePage = () => {
     }
   };
 
-  const removeFromCart = async itemId => {
+  const removeFromCart = async (itemId) => {
     try {
       const response = await axios.post("/remove-from-cart", { itemId, userId });
       console.log("Item removed from cart:", response.data);
-      // Update the quantity of the item in the state using functional update
-      setMenuItems(prevMenuItems =>
-        prevMenuItems.map(item =>
+      setMenuItems((prevMenuItems) =>
+        prevMenuItems.map((item) =>
           item._id === itemId ? { ...item, quantity: Math.max(item.quantity - 1, 0) } : item
         )
       );
@@ -58,6 +83,10 @@ const OrderOnlinePage = () => {
       console.error("Error removing item from cart:", error);
     }
   };
+
+  if (userLocation !== desiredLocation) {
+    return <div>You do not have access to this page from your current location.</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -75,14 +104,14 @@ const OrderOnlinePage = () => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 max-w-6xl">
         {menuItems
-          .filter(item =>
+          .filter((item) =>
             item.name.toLowerCase().includes(searchTerm.toLowerCase())
           )
-          .map(item => (
+          .map((item) => (
             <div
               key={item._id}
               className="flex flex-col justify-between p-4 bg-white rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
-              style={{ aspectRatio: '1/1' }} // Ensure square aspect ratio
+              style={{ aspectRatio: "1/1" }} // Ensure square aspect ratio
             >
               <div className="h-full overflow-hidden rounded-lg">
                 <img
@@ -128,4 +157,4 @@ const OrderOnlinePage = () => {
   );
 };
 
-export default OrderOnlinePage;
+export default OrderOnline;

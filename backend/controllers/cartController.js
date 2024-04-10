@@ -101,8 +101,44 @@ const clearCart = async (req, res) => {
   }
 };
 
+const removefromcart  = async (req, res) => {
+  const { itemId, userId } = req.body;
 
+  try {
+    // Find the cart item in the database
+    const cartItem = await CartItem.findOne({ itemId, userId });
+
+    // If the item exists in the cart, decrement its quantity
+    if (cartItem) {
+      // If quantity is already 0, do nothing
+      if (cartItem.quantity === 0) {
+        return res.status(400).json({ message: "Item quantity is already 0." });
+      }
+      cartItem.quantity--; // Decrement quantity
+      await cartItem.save(); // Save the updated cart item
+      res.status(200).json({ message: "Item removed from cart successfully.", cartItem });
+    } else {
+      // If the item is not found in the cart, return an error
+      res.status(404).json({ message: "Item not found in the cart." });
+    }
+  } catch (error) {
+    console.error("Error removing item from cart:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+}
+
+const getcartitemsfororderpage =async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    // Find cart items associated with the user ID
+    const cartItems = await CartItem.find({ userId });
+    res.json(cartItems);
+  } catch (error) {
+    console.error('Failed to fetch cart items:', error);
+    res.status(500).json({ error: 'Failed to fetch cart items' });
+  }
+}
 
 module.exports = { addToCart,getcartitems,updateCartItemQuantity,
   deleteCartItem,
-  clearCart };
+  clearCart,removefromcart,getcartitemsfororderpage };

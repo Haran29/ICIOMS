@@ -14,7 +14,7 @@ import CartPage from "./pages/CartPage";
 import OrderConsole from "./pages/OrderConsole"
 import axios from "axios";
 import { Toaster } from "react-hot-toast";
-import UserProvider, { UserContext } from "../context/userContext";
+import UserProvider from "../context/userContext";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
