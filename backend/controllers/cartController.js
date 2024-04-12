@@ -1,5 +1,5 @@
 const { response } = require("express");
-const CartItem = require("../models/CartItem");
+const CartItem = require("../models/cartItem");
 
 
 const addToCart = async (req, res) => {
