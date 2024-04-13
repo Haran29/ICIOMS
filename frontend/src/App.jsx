@@ -15,6 +15,12 @@ import { Toaster } from "react-hot-toast";
 import UserProvider from "../context/userContext";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
+import CreateBatch from "./pages/CreateBatch";
+import UpdateBatch from "./pages/UpdateBatch";
+import ViewBatch from "./pages/ViewBatch";
+import GenerateReport from "./pages/GenerateReport";
+import QMNavBar from "./component/QMNavBar"
+import QMHome from "./pages/QMHome";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -35,6 +41,12 @@ const App = () => {
           <Route path="/AboutUs" element={<AboutUs />} />
           <Route path="/ContactUS" element={<ContactUS />} />
           <Route path="/Dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/qm-home" element={<QMHome />} />
+          <Route path="/create-batch" element={<CreateBatch />} />
+          <Route path="/update-batch/:batchID" element={<UpdateBatch />} />
+          <Route path="/view-batch" element={<ViewBatch />} />
+          <Route path="/generate-report" element={<GenerateReport />} />
         </Routes>
       </UserProvider>
     </>
