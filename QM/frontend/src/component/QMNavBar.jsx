@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import YourImage from "../assets/person.png";
 
-const NavBar = () => {
+const QMNavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -87,4 +87,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default QMNavBar;

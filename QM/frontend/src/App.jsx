@@ -4,13 +4,13 @@ import CreateBatch from "./pages/CreateBatch";
 import UpdateBatch from "./pages/UpdateBatch";
 import ViewBatch from "./pages/ViewBatch";
 import GenerateReport from "./pages/GenerateReport";
-import NavBar from "./component/NavBar";
+import QMNavBar from "./component/QMNavBar";
 import QMHome from "./pages/QMHome";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <NavBar />
+      <QMNavBar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/qm-home" element={<QMHome />} />
