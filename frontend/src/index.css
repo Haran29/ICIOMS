@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+* > *{
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.table,th,td{
+    border:1px solid black;
+    border-collapse:collapse;
+    grid-auto-rows: max-content;
+    column-width: auto;
+}
+
+body{
+    background-image: url('./assets/icccc.png');
+    background-size: 1500px 1000px; 
+    background-position: 0%;
+}

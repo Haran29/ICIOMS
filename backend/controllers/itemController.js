@@ -44,7 +44,7 @@ const deleteItem = async (req, res) => {
 
 const updateItem = async (req, res) => {
   try {
-    const itemId = req.params.id;
+    const itemId = req.params.id;      
     const { name, price, image } = req.body;
     const updatedItem = await Item.findByIdAndUpdate(
       itemId,

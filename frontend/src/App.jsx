@@ -15,6 +15,15 @@ import { Toaster } from "react-hot-toast";
 import UserProvider from "../context/userContext";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
+import Profile from "./pages/Profile";
+
+
+
+import ResetPassword from "./ResetPassword";
+import Admindash from "./pages/Admindash";
+import UserReport from "./pages/UserReport";
+import Searchuser from "./pages/Searchuser";
+import PasswordRecovery from "./pages/PasswordRecovery";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -35,6 +44,15 @@ const App = () => {
           <Route path="/AboutUs" element={<AboutUs />} />
           <Route path="/ContactUS" element={<ContactUS />} />
           <Route path="/Dashboard" element={<Dashboard />} />
+          <Route path="/Profile" element={<Profile />} />
+          
+          
+          
+          <Route path="/ResetPassword" element={<ResetPassword/>} />
+          <Route path="/Admindash" element={<Admindash/>} />
+          <Route path="/UserReport" element={<UserReport />} />
+          <Route path="/Searchuser" element={<Searchuser />} />
+          <Route path="/PasswordRecovery" element={<PasswordRecovery />} />
         </Routes>
       </UserProvider>
     </>

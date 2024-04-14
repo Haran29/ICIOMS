@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
-
+const ENV = require("../helpers/auth");
+const jwt = require("jsonwebtoken");
 const hashPassword = (password) => {
   return new Promise((resolve, reject) => {
     bcrypt.genSalt(12, (err, salt) => {
@@ -16,11 +17,18 @@ const hashPassword = (password) => {
   });
 };
 
+
 const comparePassword = (password, hashed) => {
   return bcrypt.compare(password, hashed);
 };
 
+
+
+    
 module.exports = {
   hashPassword,
-  comparePassword,
+  comparePassword
+  
+  
 };
+

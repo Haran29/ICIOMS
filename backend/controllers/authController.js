@@ -5,6 +5,12 @@ const User = require("../models/user");
 require('dotenv').config();
 const { hashPassword, comparePassword } = require("../helpers/auth");
 const secretKey = process.env.SECRET_KEY;
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const bodyParser = require('body-parser');
+const Pass = require("../models/Pass");
+const otpGenerator = require('otp-generator');
+
 
 const test = (req, res) => {
   res.json("Test is Working");
@@ -33,7 +39,7 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const user = await User.create({
+    const user = await User.create({ 
       name,
       email,
       contact,
@@ -45,6 +51,7 @@ const registerUser = async (req, res) => {
     console.log(error);
   }
 };
+
 
 const LoginUser = async (req, res) => {
   try {
@@ -90,6 +97,162 @@ const getProfile = (req, res) => {
   }
 };
 
+
+//--update profile
+ // Fetch user profile
+ const gettuser = async (req, res) => {
+  try {
+    const user = await User.findOne();
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Update user profile
+const updateUser = async (req, res) => {
+  const { name, email } = req.body;
+  
+  try {
+    const user = await User.findOne();
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.name = name;
+    user.email = email;
+    await user.save();
+    
+    res.json({ message: 'User details updated successfully' });
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
+//--------- 
+
+// Route to send OTP for password reset
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'ssavindi660@gmail.com', // Replace with your email
+    pass: 'Sankasavi99#', // Replace with your password
+  },
+});
+const sendotp = async (req, res) => {
+  const { email } = req.body;
+  const OTP = otpGenerator.generate(6, { upperCase: false, specialChars: false });
+
+  try {
+    // Save OTP to the database
+    await User.findOneAndUpdate({ email }, { otp: OTP }, { upsert: true });
+
+    // Send OTP via email
+    await transporter.sendMail({
+      from: 'ssavindi660@gmail.com', // Replace with your email
+      to: email,
+      subject: 'Password Reset OTP',
+      text: `Your OTP for password reset is: ${OTP}`,
+    });
+
+    res.json({ message: 'OTP sent successfully' });
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    res.status(500).json({ message: 'Failed to send OTP' });
+  }
+};
+
+// Route to reset password with OTP verification
+const resettpassword = async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+
+  try {
+    // Check if the OTP is valid
+    const user = await User.findOne({ email, otp });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    // Update the user's password
+    await User.updateOne({ email }, { $set: { otp: null, password: newPassword } });
+    res.json({ message: 'Password reset successfully' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    res.status(500).json({ message: 'Failed to reset password' });
+  }
+};
+
+
+//---------------------
+
+
+//delete user
+// Fetch all users
+const fetchuser = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Delete a user
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const deleteduser = await User.findByIdAndDelete(userId);
+    if (!deleteduser) {
+      return res.json({ error: "user not found" });
+    }
+    res.json({ message: "Item deleted successfully", deleteduser });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete user" });
+  }
+};
+//--------------
+
+// Generate report of registered users
+const genaraterepo = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    console.error('Error generating report:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+//------
+
+//searchuser details
+// Endpoint for searching user by username
+const searchuser = async (req, res) => {
+  const { email } = req.query;
+  
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error('Error searching user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+//--------------
+
+
+
+
+
+
 const logout = (req, res) => {
   
   res.clearCookie("token");
@@ -101,5 +264,15 @@ module.exports = {
   registerUser,
   LoginUser,
   getProfile,
-  logout
+  logout,
+  updateUser,
+  gettuser,
+  resettpassword,
+  deleteUser,
+  genaraterepo,
+  fetchuser,
+  searchuser,
+  sendotp
+  
+ 
 };
