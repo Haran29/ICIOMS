@@ -50,4 +50,5 @@ router.delete("/cart/clear/:userId", clearCart);
 
 router.post("/remove-from-cart", removefromcart);
 router.get("/getcartitemsfororderpage/:userId", getcartitemsfororderpage);
+router.get("/test",() => console.log("Testing2"))
 module.exports = router;

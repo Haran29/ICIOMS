@@ -69,4 +69,8 @@ const getmenuItem = async (req, res) => {
   }
 };
 
-module.exports = { addItem, deleteItem, updateItem ,getmenuItem };
+const test = () =>
+{
+  consloe.log("Testing2")
+}
+module.exports = { addItem, deleteItem, updateItem ,getmenuItem,test};
