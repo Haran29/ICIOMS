@@ -18,7 +18,6 @@ const OrderOnlinePage = () => {
   const fetchMenuItems = async () => {
     try {
       const response = await axios.get("/get-menuItem");
-      // Initialize quantity property for each menu item
       const updatedMenuItems = response.data.map(item => ({ ...item, quantity: 0 }));
       setMenuItems(updatedMenuItems);
     } catch (error) {
@@ -33,8 +32,6 @@ const OrderOnlinePage = () => {
   const addToCart = async itemId => {
     try {
       const response = await axios.post("/add-to-cart", { itemId, userId });
-      console.log("Item added to cart:", response.data);
-      // Update the quantity of the item in the state
       const updatedMenuItems = menuItems.map(item =>
         item._id === itemId ? { ...item, quantity: item.quantity + 1 } : item
       );
@@ -47,8 +44,6 @@ const OrderOnlinePage = () => {
   const removeFromCart = async itemId => {
     try {
       const response = await axios.post("/remove-from-cart", { itemId, userId });
-      console.log("Item removed from cart:", response.data);
-      // Update the quantity of the item in the state using functional update
       setMenuItems(prevMenuItems =>
         prevMenuItems.map(item =>
           item._id === itemId ? { ...item, quantity: Math.max(item.quantity - 1, 0) } : item
@@ -62,7 +57,7 @@ const OrderOnlinePage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-center mb-6">
-        <div className="relative w-full max-w-screen-3/4">
+        <div className="relative w-full max-w-screen-md">
           <input
             type="text"
             placeholder="Search..."
@@ -82,17 +77,17 @@ const OrderOnlinePage = () => {
             <div
               key={item._id}
               className="flex flex-col justify-between p-4 bg-white rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
-              style={{ aspectRatio: '1/1' }} // Ensure square aspect ratio
+              style={{ aspectRatio: '1/1', textAlign: 'center' }} // Center the content
             >
-              <div className="h-full overflow-hidden rounded-lg">
+              <div className="h-full overflow-hidden rounded-lg flex justify-center items-center">
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-full h-full object-cover transform transition-transform group-hover:scale-105"
+                  className="max-w-full max-h-full object-contain transform transition-transform group-hover:scale-105"
                 />
               </div>
               <div className="flex justify-between items-center mt-4">
-                <div>
+                <div className="text-center">
                   <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
                   <p className="text-gray-600">${item.price}</p>
                 </div>

@@ -6,6 +6,7 @@ const OrderConsole = () => {
   const [inventory, setInventory] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isBillModalOpen, setIsBillModalOpen] = useState(false);
 
   useEffect(() => {
     fetchInventory();
@@ -66,11 +67,94 @@ const OrderConsole = () => {
     return total.toFixed(2);
   };
 
-  const handlePay = async () => {
-    // Implement payment logic here
+  const toggleBillModal = () => {
+    setIsBillModalOpen(!isBillModalOpen);
   };
 
-  // Filter inventory based on search term
+  const generateBill = async () => {
+    try {
+      const orderData = {
+        items: selectedItems.map(item => ({
+          itemId: item._id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          total: calculateItemTotal(item)
+        })),
+        totalAmount: calculateOverallTotal()
+      };
+
+      const response = await axios.post("/save-order", orderData);
+
+      if (response.status === 200) {
+        setIsBillModalOpen(true);
+      } else {
+        console.error("Failed to save order:", response.data);
+      }
+    } catch (error) {
+      console.error("Error generating bill:", error);
+    }
+  };
+
+  const BillModal = ({ onClose, bill }) => {
+    const handlePrint = () => {
+      window.print();
+    };
+
+    return (
+      <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <div className="text-center mb-4">
+              <h2 className="text-2xl font-semibold">Order Receipt</h2>
+              <p className="text-gray-600">Date: {new Date().toLocaleDateString()}</p>
+            </div>
+            <div className="mb-4">
+              {bill.items.map((item, index) => (
+                <div key={index} className="flex justify-between mb-1">
+                  <span>{item.name}</span>
+                  <span>${item.total}</span>
+                </div>
+              ))}
+            </div>
+            <div className="border-t pt-4 mb-4">
+              <div className="flex justify-between">
+                <span className="font-semibold">Subtotal:</span>
+                <span>${(bill.totalAmount - (bill.totalAmount * 0.1)).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-semibold">Tax (10%):</span>
+                <span>${(bill.totalAmount * 0.1).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-semibold">Total Amount:</span>
+                <span>${bill.totalAmount}</span>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end space-x-4">
+              <button 
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700"
+                onClick={handlePrint}
+              >
+                Print Receipt
+              </button>
+              <button 
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
+                onClick={onClose}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+        <div 
+          className="fixed inset-0 bg-black opacity-50"
+          onClick={onClose}
+        ></div>
+      </div>
+    );
+  };
+
   const filteredInventory = inventory.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -79,10 +163,8 @@ const OrderConsole = () => {
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="max-w-5xl w-full p-8 bg-white rounded-lg shadow-lg">
         <div className="flex justify-between">
-          {/* Inventory */}
           <div className="w-3/5 pr-8">
             <h2 className="text-3xl font-semibold mb-6">Inventory</h2>
-            {/* Search Bar */}
             <div className="mb-4 relative">
               <input
                 type="text"
@@ -105,7 +187,6 @@ const OrderConsole = () => {
               ))}
             </div>
           </div>
-          {/* Selected Items */}
           <div className="w-2/5">
             <h2 className="text-3xl font-semibold mb-6"> Order</h2>
             {selectedItems.map(item => (
@@ -123,12 +204,29 @@ const OrderConsole = () => {
             {selectedItems.length > 0 && (
               <div>
                 <p className="text-right mb-2">Overall Total: ${calculateOverallTotal()}</p>
-                <button  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg"onClick={handlePay} >Pay Now</button>
+                <button  
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg"
+                  onClick={generateBill}
+                >
+                  Generate Bill
+                </button>
               </div>
             )}
           </div>
         </div>
       </div>
+      {isBillModalOpen && (
+        <BillModal 
+          bill={{
+            items: selectedItems.map(item => ({
+              name: item.name,
+              total: calculateItemTotal(item)
+            })),
+            totalAmount: calculateOverallTotal()
+          }}
+          onClose={toggleBillModal}
+        />
+      )}
     </div>
   );
 };

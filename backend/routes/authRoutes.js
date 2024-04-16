@@ -2,12 +2,21 @@
 
 const express = require("express");
 const router = express.Router();
+
 const {
   addItem,
   deleteItem,
   updateItem,
   getmenuItem,
 } = require("../controllers/itemController");
+const {
+  handleOrder,
+  getOrder,
+  getAllorder,
+  updateStatus
+} = require("../controllers/orderController");
+
+const { handlePayment } = require("../controllers/paymentController");
 const {
   addToCart,
   getcartitems,
@@ -50,5 +59,11 @@ router.delete("/cart/clear/:userId", clearCart);
 
 router.post("/remove-from-cart", removefromcart);
 router.get("/getcartitemsfororderpage/:userId", getcartitemsfororderpage);
-router.get("/test",() => console.log("Testing2"))
+router.get("/test", () => console.log("Testing2"));
+router.post("/simulate-payment", handlePayment);
+router.post("/orders/create", handleOrder);
+router.get("/orders/user/:userId", getOrder);
+router.get("/orders",getAllorder);
+router.put('/orders/:orderId',updateStatus);
+
 module.exports = router;

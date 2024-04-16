@@ -10,7 +10,12 @@ const cookieParser = require("cookie-parser");
 const mongoUrl = process.env.MONGO_URL;
 
 
+
+
 const app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+
 
 mongoose
   .connect(mongoUrl)
