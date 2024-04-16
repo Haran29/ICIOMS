@@ -45,6 +45,7 @@ router.post("/logout", logout);
 router.post("/add-item", addItem);
 
 router.get("/get-menuItem", getmenuItem);
+router.get("/items", getmenuItem);
 // Delete Item Route
 router.delete("/delete-item/:id", deleteItem);
 

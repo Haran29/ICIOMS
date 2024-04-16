@@ -1,15 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Line } from 'react-chartjs-2';
+import { Chart, CategoryScale, LinearScale, BarController, BarElement } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+
+// Registering the plugins
+Chart.register(CategoryScale, LinearScale, BarController, BarElement);
 
 const SalesStatisticsPage = () => {
   const [orders, setOrders] = useState([]);
+  const [items, setItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const chartRef = useRef(null);
 
   useEffect(() => {
     fetchOrderHistory();
+    fetchItems();
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
   }, []);
 
   const fetchOrderHistory = async () => {
@@ -21,12 +33,12 @@ const SalesStatisticsPage = () => {
     }
   };
 
-  const updateOrderStatus = async (orderId, newStatus) => {
+  const fetchItems = async () => {
     try {
-      await axios.put(`/orders/${orderId}`, { status: newStatus });
-      fetchOrderHistory();
+      const response = await axios.get("/items");
+      setItems(response.data);
     } catch (error) {
-      console.error("Failed to update order status:", error);
+      console.error("Failed to fetch items:", error);
     }
   };
 
@@ -36,34 +48,41 @@ const SalesStatisticsPage = () => {
     (!endDate || new Date(order.createdAt) <= new Date(endDate))
   );
 
+  // Calculate total sales for each item
+  const itemSales = {};
+  filteredOrders.forEach(order => {
+    order.items.forEach(item => {
+      if (item.itemId in itemSales) {
+        itemSales[item.itemId] += item.price * item.quantity;
+      } else {
+        itemSales[item.itemId] = item.price * item.quantity;
+      }
+    });
+  });
+
+  // Map item IDs to item names
+  const itemNames = {};
+  items.forEach(item => {
+    itemNames[item.itemId] = item.name;
+  });
+
   // Prepare data for the chart
   const chartData = {
-    labels: filteredOrders.map(order => new Date(order.createdAt).toLocaleDateString()),
+    labels: Object.keys(itemSales).map(itemId => itemNames[itemId] || itemId),
     datasets: [{
-      label: 'Total Sales',
-      data: filteredOrders.map(order => order.totalAmount),
-      borderColor: 'rgba(75,192,192,1)',
+      label: 'Total Sales per Item',
+      data: Object.values(itemSales),
       backgroundColor: 'rgba(75,192,192,0.2)',
-      fill: true
+      borderColor: 'rgba(75,192,192,1)',
+      borderWidth: 1
     }]
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="max-w-4xl w-full p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-3xl font-semibold mb-8 text-center">Sales Statistics</h2>
-
-        {/* Search Bar */}
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Search by Order ID..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="border p-2 rounded-md w-full"
-          />
-        </div>
-
+        <h2 className="text-3xl font-semibold mb-8 text-center">Sales Statistics per Item</h2>
+        
         {/* Date Range Filter */}
         <div className="mb-6">
           <label className="text-gray-600 mr-2">Start Date:</label>
@@ -84,50 +103,9 @@ const SalesStatisticsPage = () => {
 
         {/* Sales Chart */}
         <div className="mb-8">
-          <h3 className="text-xl font-semibold mb-4">Sales Statistics</h3>
-          <Line data={chartData} />
+          <Bar ref={chartRef} data={chartData} />
         </div>
 
-        <div className="space-y-8">
-          {filteredOrders.map((order) => (
-            <div key={order._id} className="border rounded-lg overflow-hidden shadow-md">
-              <div className="p-6 bg-gray-100">
-                <h3 className="text-xl font-semibold mb-4">Order ID: {order._id}</h3>
-                <p className="text-gray-600 mb-2">Date: {new Date(order.createdAt).toLocaleDateString()}</p>
-                <p className="text-gray-600 mb-2">Total Amount: <span className="font-semibold">${order.totalAmount.toFixed(2)}</span></p>
-                <div className="mb-4">
-                  <label className="text-gray-600">Status:</label>
-                  <select 
-                    value={order.status}
-                    onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                    className={`ml-2 font-semibold ${order.status === 'completed' ? 'text-green-600' : 'text-red-600'}`}
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                </div>
-              </div>
-              <div className="p-6">
-                <h4 className="text-lg font-semibold mb-4">Items:</h4>
-                <ul className="space-y-4">
-                  {order.items.map((item) => (
-                    <li key={item.itemId} className="flex justify-between items-center">
-                      <div className="flex items-center space-x-4">
-                        <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-lg" />
-                        <div>
-                          <p className="text-gray-700">{item.name}</p>
-                          <p className="text-gray-500">${item.price.toFixed(2)}</p>
-                        </div>
-                      </div>
-                      <span className="font-semibold">{item.quantity} x ${item.price.toFixed(2)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
