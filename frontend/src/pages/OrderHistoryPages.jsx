@@ -82,7 +82,7 @@ const OrderHistoryPages = () => {
                     <li key={item.itemId} className="flex justify-between items-center">
                       <div className="flex items-center space-x-4">
                         <img 
-                          src={item.image || fallbackImageUrl}  // Use fallback image if item.image is missing
+                          src={item.imageUrl || 'https://via.placeholder.com/64x64'}
                           alt={item.name} 
                           className="w-16 h-16 object-cover rounded-lg" 
                           onError={(e) => { e.target.onerror = null; e.target.src = fallbackImageUrl }}  // Fallback on image load error

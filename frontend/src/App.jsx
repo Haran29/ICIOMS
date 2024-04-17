@@ -22,6 +22,7 @@ import SalesPersonManagerNavBar from "./component/SalesPersonManagerNavBar"
 import SalesPersonNavBar from "./component/SalesPersonNavBar";
 import OrderHistoryPages from "./pages/OrderHistoryPages"
 import SalesStatisticsPage from "./pages/SalesStatisticsPage"
+import Footer from "./component/Footer";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -86,6 +87,7 @@ const App = () => {
           <Route path="/GenerateReport" element={<GenerateReport/>} />
           <Route path="/SalesStatisticsPage" element={<SalesStatisticsPage/>} />
         </Routes>
+        <Footer/>
       </UserProvider>
     </>
   );
