@@ -13,7 +13,9 @@ const {
   handleOrder,
   getOrder,
   getAllorder,
-  updateStatus
+  updateStatus,
+  deleteOrder,
+  saveOfflineOrder
 } = require("../controllers/orderController");
 
 const { handlePayment } = require("../controllers/paymentController");
@@ -66,5 +68,6 @@ router.post("/orders/create", handleOrder);
 router.get("/orders/user/:userId", getOrder);
 router.get("/orders",getAllorder);
 router.put('/orders/:orderId',updateStatus);
-
+router.delete('/orders/:orderId',deleteOrder)
+router.post('/save-offline-order',saveOfflineOrder)
 module.exports = router;

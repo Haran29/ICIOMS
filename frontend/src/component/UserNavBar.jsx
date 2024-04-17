@@ -40,7 +40,7 @@ const UserNavBar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/AboutUs" className="text-black hover:text-green-600">
+              <Link to="#" className="text-black hover:text-green-600">
                 Delivery
               </Link>
             </li>
@@ -50,17 +50,17 @@ const UserNavBar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/OrderConsole" className="text-black hover:text-green-600">
+              <Link to="#" className="text-black hover:text-green-600">
                 Gift Cards
               </Link>
             </li>
             <li>
-              <Link to="/AboutUs" className="text-black hover:text-green-600">
+              <Link to="#" className="text-black hover:text-green-600">
                 AboutUs
               </Link>
             </li>
             <li>
-              <Link to="/ContactUs" className="text-black hover:text-green-600">
+              <Link to="#" className="text-black hover:text-green-600">
                 ContactUs
               </Link>
             </li>

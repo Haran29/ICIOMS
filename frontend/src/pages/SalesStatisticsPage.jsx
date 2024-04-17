@@ -9,7 +9,6 @@ Chart.register(CategoryScale, LinearScale, BarController, BarElement);
 const SalesStatisticsPage = () => {
   const [orders, setOrders] = useState([]);
   const [items, setItems] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const chartRef = useRef(null);

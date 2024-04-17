@@ -14,7 +14,8 @@ const OrderHistoryPage = () => {
   const fetchOrderHistory = async () => {
     try {
       const response = await axios.get("/orders");
-      setOrders(response.data);
+      const sortedOrders = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setOrders(sortedOrders);
     } catch (error) {
       console.error("Failed to fetch order history:", error);
     }
@@ -29,6 +30,16 @@ const OrderHistoryPage = () => {
     }
   };
 
+  const deleteOrder = async (orderId) => {
+    try {
+      await axios.delete(`/orders/${orderId}`);
+      fetchOrderHistory();
+    } catch (error) {
+      console.error("Failed to delete order:", error.response ? error.response.data : error);
+    }
+  };
+  
+
   const filteredOrders = orders.filter(order => 
     order._id.toLowerCase().includes(searchQuery.toLowerCase()) &&
     (!startDate || new Date(order.createdAt) >= new Date(startDate)) &&
@@ -40,7 +51,6 @@ const OrderHistoryPage = () => {
       <div className="max-w-4xl w-full p-8 bg-white rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold mb-8 text-center">Order History</h2>
 
-        {/* Search Bar */}
         <div className="mb-6">
           <input
             type="text"
@@ -51,7 +61,6 @@ const OrderHistoryPage = () => {
           />
         </div>
 
-        {/* Date Range Filter */}
         <div className="mb-6">
           <label className="text-gray-600 mr-2">Start Date:</label>
           <input
@@ -88,6 +97,7 @@ const OrderHistoryPage = () => {
                     <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
+                <button onClick={() => deleteOrder(order._id)} className="text-red-600 hover:text-red-700">Delete Order</button>
               </div>
               <div className="p-6">
                 <h4 className="text-lg font-semibold mb-4">Items:</h4>
@@ -95,7 +105,12 @@ const OrderHistoryPage = () => {
                   {order.items.map((item) => (
                     <li key={item.itemId} className="flex justify-between items-center">
                       <div className="flex items-center space-x-4">
-                        <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-lg" />
+                        <img 
+                          src={item.image || 'https://via.placeholder.com/64x64'}
+                          alt={item.name} 
+                          className="w-16 h-16 object-cover rounded-lg" 
+                          onError={(e) => { e.target.onerror = null; e.target.src='https://via.placeholder.com/64x64' }}
+                        />
                         <div>
                           <p className="text-gray-700">{item.name}</p>
                           <p className="text-gray-500">${item.price.toFixed(2)}</p>
