@@ -140,7 +140,7 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'ssavindi660@gmail.com', // Replace with your email
-    pass: 'Sankasavi99#', // Replace with your password
+    pass: 'n', // Replace with your password
   },
 });
 const sendotp = async (req, res) => {
@@ -151,7 +151,7 @@ const sendotp = async (req, res) => {
     // Save OTP to the database
     await User.findOneAndUpdate({ email }, { otp: OTP }, { upsert: true });
 
-    // Send OTP via email
+    // Send OTP via email   
     await transporter.sendMail({
       from: 'ssavindi660@gmail.com', // Replace with your email
       to: email,
@@ -229,20 +229,19 @@ const genaraterepo = async (req, res) => {
 };
 //------
 
-//searchuser details
-// Endpoint for searching user by username
-const searchuser = async (req, res) => {
-  const { email } = req.query;
-  
+//adduser details
+const adduser = async (req, res) => {
+  // Route to add a new user
+
+  const { name, email,contact,role} = req.body;
+
   try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    res.json(user);
+    const user = new User({ name, email ,contact,role});
+    await user.save();
+    res.json({ message: 'User added successfully' });
   } catch (error) {
-    console.error('Error searching user:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error adding user:', error);
+    res.status(500).json({ message: 'Failed to add user' });
   }
 };
 
@@ -271,7 +270,7 @@ module.exports = {
   deleteUser,
   genaraterepo,
   fetchuser,
-  searchuser,
+  adduser,
   sendotp
   
  

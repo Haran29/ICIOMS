@@ -19,12 +19,12 @@ import Profile from "./pages/Profile";
 
 
 
-import ResetPassword from "./ResetPassword";
+
 import Admindash from "./pages/Admindash";
 import UserReport from "./pages/UserReport";
-import Searchuser from "./pages/Searchuser";
-import PasswordRecovery from "./pages/PasswordRecovery";
 
+import PasswordRecovery from "./pages/PasswordRecovery";
+import Adduser from "./pages/Adduser"
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
@@ -48,10 +48,10 @@ const App = () => {
           
           
           
-          <Route path="/ResetPassword" element={<ResetPassword/>} />
+         
           <Route path="/Admindash" element={<Admindash/>} />
           <Route path="/UserReport" element={<UserReport />} />
-          <Route path="/Searchuser" element={<Searchuser />} />
+          <Route path="/Adduser" element={<Adduser />} />
           <Route path="/PasswordRecovery" element={<PasswordRecovery />} />
         </Routes>
       </UserProvider>

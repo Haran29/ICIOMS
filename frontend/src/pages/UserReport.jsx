@@ -22,51 +22,41 @@ const UserReport = () => {
     fetchUsers();
   }, []);
 
-  
-
   return (
-   
-    <div className="container mx-auto px-4 ">
-     
-      <h2 className="text-3xl font-semibold mt-8 mb-4" >Registered User Report</h2>
+    <div className="container mx-auto px-4">
+      <h2 className="text-2xl font-semibold mt-8 mb-4">Registered User Report</h2>
 
       {error && <p className="text-red-500">{error}</p>}
       {message && <p className="text-green-500">{message}</p>}
 
       <div className="mt-4">
-        
-        
-        
-          <table class="table w-full">
-        <tr><th>Name</th>
-            <th>Email</th>
-            <th>Contact</th>
+        <table className="table w-full">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">Name</th>
+              <th className="px-4 py-2">Email</th>
+              <th className="px-4 py-2">Contact</th>
             </tr>
-            </table>
-          {users.map(user => (
-            <table key={user._id} className="border border-gray-200 p-4 rounded mb-2"
-           class="table w-full"
-           
-           >
-            
-            <tr class="text-center px-30 py-4">  <td className="font-semibold"> {user.name} </td>
-              <td colospan ="2" className="text-gray-600"> {user.email} </td>
-              <td className="text-gray-600">  {user.contact}  </td></tr>
-            </table>
-          ))}
-          <br></br>  
-        <button 
-           className="bg-green-500 hover:bg-green-500 text-white font-bold py-2 px-4 rounded"
-        ><a href="../Profile">
-          Go Back</a>
+          </thead>
+          <tbody>
+            {users.map(user => (
+              <tr key={user._id} className="border border-gray-200">
+                <td className="px-4 py-2 font-semibold">{user.name}</td>
+                <td className="px-4 py-2 text-gray-600">{user.email}</td>
+                <td className="px-4 py-2 text-gray-600">{user.contact}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mt-4">
+          <a href="../Profile">Go Back</a>
         </button>
-        <img
-          src={Image}
-          alt="Your Photo"
-          style={{ width: "800x", height: "600px" }}/>
+
+        
+      
       </div>
     </div>
-    
   );
 };
 

@@ -15,7 +15,7 @@ const {
   genaraterepo,
   fetchuser,
   deleteUser,
-  searchuser,
+  adduser,
   resettpassword,
   sendotp
   
@@ -51,7 +51,7 @@ router.get('/api/users/reports',genaraterepo);
 //----------------
 
 //searchuser
-router.get('/api/searchuser?name:name',searchuser);
+router.post('/api/add-user',adduser);
 
 //-------
 //admin
