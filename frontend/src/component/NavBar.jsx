@@ -62,7 +62,7 @@ const NavBar = () => {
             <li>
               <Link
                 to="/ContactUs"
-                className="text-black hover:text-green-600 "
+                className="text-black hover:text-green-600"
               >
                 Contact Us
               </Link>
@@ -70,10 +70,16 @@ const NavBar = () => {
           </ul>
         </div>
         <div className="hidden md:flex items-center space-x-4">
-          <Link to="/SignUpPage" className="text-black hover:text-green-600">
+          <Link 
+            to="/SignUpPage" 
+            className="text-white bg-green-600 px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 ease-in-out"
+          >
             Sign Up
           </Link>
-          <Link to="/LoginPage" className="text-black hover:text-green-600 ">
+          <Link 
+            to="/LoginPage" 
+            className="text-white bg-green-600 px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 ease-in-out"
+          >
             Sign In
           </Link>
         </div>

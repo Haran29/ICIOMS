@@ -8,19 +8,14 @@ Chart.register(CategoryScale, LinearScale, BarController, BarElement);
 
 const SalesStatisticsPage = () => {
   const [orders, setOrders] = useState([]);
-  const [items, setItems] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [selectedChart, setSelectedChart] = useState('sales'); // 'sales' or 'status'
   const chartRef = useRef(null);
 
   useEffect(() => {
     fetchOrderHistory();
-    fetchItems();
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
-      }
-    };
   }, []);
 
   const fetchOrderHistory = async () => {
@@ -29,15 +24,6 @@ const SalesStatisticsPage = () => {
       setOrders(response.data);
     } catch (error) {
       console.error("Failed to fetch order history:", error);
-    }
-  };
-
-  const fetchItems = async () => {
-    try {
-      const response = await axios.get("/items");
-      setItems(response.data);
-    } catch (error) {
-      console.error("Failed to fetch items:", error);
     }
   };
 
@@ -59,15 +45,42 @@ const SalesStatisticsPage = () => {
     });
   });
 
-  // Map item IDs to item names
-  const itemNames = {};
-  items.forEach(item => {
-    itemNames[item.itemId] = item.name;
-  });
+  // Count orders by status
+  const countOrdersByStatus = () => {
+    const statusCounts = {
+      completed: 0,
+      pending: 0,
+      canceled: 0,
+    };
 
-  // Prepare data for the chart
+    filteredOrders.forEach(order => {
+      switch (order.status) {
+        case 'completed':
+          statusCounts.completed++;
+          break;
+        case 'pending':
+          statusCounts.pending++;
+          break;
+        case 'canceled':
+          statusCounts.canceled++;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return statusCounts;
+  };
+
+  const statusCounts = countOrdersByStatus();
+
+  // Prepare data for the sales chart
   const chartData = {
-    labels: Object.keys(itemSales).map(itemId => itemNames[itemId] || itemId),
+    labels: Object.keys(itemSales).map(itemId => {
+      const order = filteredOrders.find(order => order.items.some(i => i.itemId === itemId));
+      const item = order.items.find(i => i.itemId === itemId);
+      return item.name || itemId;
+    }),
     datasets: [{
       label: 'Total Sales per Item',
       data: Object.values(itemSales),
@@ -77,10 +90,30 @@ const SalesStatisticsPage = () => {
     }]
   };
 
+  // Prepare data for the order status chart
+  const statusChartData = {
+    labels: ['Completed', 'Pending', 'Canceled'],
+    datasets: [{
+      label: 'Order Status',
+      data: [statusCounts.completed, statusCounts.pending, statusCounts.canceled],
+      backgroundColor: [
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(255, 99, 132, 0.2)',
+      ],
+      borderColor: [
+        'rgba(75, 192, 192, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(255, 99, 132, 1)',
+      ],
+      borderWidth: 1,
+    }],
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="max-w-4xl w-full p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-3xl font-semibold mb-8 text-center">Sales Statistics per Item</h2>
+        <h2 className="text-3xl font-semibold mb-8 text-center">Sales Statistics</h2>
         
         {/* Date Range Filter */}
         <div className="mb-6">
@@ -100,9 +133,30 @@ const SalesStatisticsPage = () => {
           />
         </div>
 
+        {/* Chart Selector Buttons */}
+        <div className="mb-6 flex justify-center space-x-4">
+          <button
+            className={`py-2 px-4 rounded ${selectedChart === 'sales' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600'}`}
+            onClick={() => setSelectedChart('sales')}
+          >
+            Sales per Item
+          </button>
+          <button
+            className={`py-2 px-4 rounded ${selectedChart === 'status' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-600'}`}
+            onClick={() => setSelectedChart('status')}
+          >
+            Order Status
+          </button>
+        </div>
+
         {/* Sales Chart */}
-        <div className="mb-8">
+        <div className={`${selectedChart !== 'sales' ? 'hidden' : 'block'} mb-8`}>
           <Bar ref={chartRef} data={chartData} />
+        </div>
+
+        {/* Order Status Chart */}
+        <div className={`${selectedChart !== 'status' ? 'hidden' : 'block'} mb-8`}>
+          <Bar data={statusChartData} />
         </div>
 
       </div>
