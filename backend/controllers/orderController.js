@@ -15,13 +15,22 @@ const handleOrder = async (req, res) => {
       status,
     } = req.body;
 
+    // Map through the items to extract itemId, quantity, price, name, and imageUrl
+    const orderItems = items.map(item => ({
+      itemId: item.itemId,
+      quantity: item.quantity,
+      price: item.price,
+      name: item.name,      // Add name
+      imageUrl: item.imageUrl // Add imageUrl
+    }));
+
     const newOrder = new Order({
       userId,
       phoneNumber,
       postalCode,
       city,
       streetAddress,
-      items,
+      items: orderItems, // Use the updated orderItems array
       totalAmount,
       status,
     });
@@ -79,9 +88,60 @@ const updateStatus =  async (req, res) => {
   }
 };
 
+const deleteOrder = async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    await Order.deleteOne({ _id: orderId });
+
+    res.json({ message: 'Order deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    res.status(500).json({ message: 'Failed to delete order' });
+  }
+}
+
+
+const saveOfflineOrder =  async (req, res) => {
+  try {
+    const { orderId, items, totalAmount } = req.body;
+
+    // Create a new offline order document
+    const offlineOrder = new OfflineOrder({
+      orderId,
+      items,
+      totalAmount
+    });
+
+    // Save the offline order to the database
+    const savedOrder = await offlineOrder.save();
+
+    // Respond with a success message and the saved order
+    res.status(200).json({
+      success: true,
+      message: 'Offline order saved successfully',
+      order: savedOrder
+    });
+  } catch (error) {
+    // Handle any errors
+    console.error('Error saving offline order:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to save offline order'
+    });
+  }
+};
 module.exports = {
   handleOrder,
   getOrder,
   getAllorder,
-  updateStatus
+  updateStatus,
+  deleteOrder,
+  saveOfflineOrder
 };

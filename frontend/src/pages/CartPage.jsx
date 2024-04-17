@@ -120,14 +120,13 @@ const CartPage = () => {
   };
 
   const handlePayment = async () => {
-    // Validate form fields
     if (!phoneNumber || !postalCode || !city || !streetAddress) {
       toast.error("All fields are required.", { position: "top-right" });
       return;
     }
   
     try {
-      const paymentResponse = await axios.post("/simulate-payment"); // Hypothetical endpoint
+      const paymentResponse = await axios.post("/simulate-payment");
   
       if (paymentResponse.status === 200) {
         createOrder();
@@ -145,7 +144,6 @@ const CartPage = () => {
       });
     }
   };
-  
 
   const createOrder = async () => {
     try {
@@ -159,6 +157,8 @@ const CartPage = () => {
         streetAddress,
         items: cartItems.map((item) => ({
           itemId: item.itemId._id,
+          name: item.itemId.name,
+          imageUrl: item.itemId.image,
           quantity: item.quantity,
           price: item.itemId.price,
         })),
@@ -194,10 +194,8 @@ const CartPage = () => {
               />
             ))}
 
-            {/* Checkout Form */}
             <div className="mt-8 border-t pt-6">
               <h3 className="text-xl font-semibold mb-4">Checkout</h3>
-
               <div className="mb-4">
                 <label
                   htmlFor="phoneNumber"
@@ -210,7 +208,6 @@ const CartPage = () => {
                   id="phoneNumber"
                   value={phoneNumber}
                   onChange={(e) => {
-                    // Validate phone number
                     const value = e.target.value;
                     if (/^[0-9]{0,10}$/.test(value)) {
                       setPhoneNumber(value);
@@ -221,7 +218,6 @@ const CartPage = () => {
                   required
                 />
               </div>
-
               <div className="mb-4">
                 <label
                   htmlFor="postalCode"
@@ -234,7 +230,6 @@ const CartPage = () => {
                   id="postalCode"
                   value={postalCode}
                   onChange={(e) => {
-                    // Validate postal code
                     const value = e.target.value;
                     if (/^[0-9]{0,5}$/.test(value)) {
                       setPostalCode(value);
@@ -245,7 +240,6 @@ const CartPage = () => {
                   required
                 />
               </div>
-
               <div className="mb-4">
                 <label
                   htmlFor="city"
@@ -263,7 +257,6 @@ const CartPage = () => {
                   required
                 />
               </div>
-
               <div className="mb-4">
                 <label
                   htmlFor="streetAddress"
@@ -282,7 +275,6 @@ const CartPage = () => {
                 />
               </div>
             </div>
-
             <div className="flex justify-end mt-4 space-x-4">
               <button
                 onClick={clearCart}
@@ -297,7 +289,6 @@ const CartPage = () => {
                 Pay
               </button>
             </div>
-
             <div className="mt-4 text-right">
               <p className="text-xl font-semibold">
                 Overall Total: ${calculateOverallTotal()}

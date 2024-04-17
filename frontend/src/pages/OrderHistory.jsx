@@ -13,7 +13,9 @@ const OrderHistoryPage = () => {
       const user = JSON.parse(sessionStorage.getItem("user"));
       if (user && user._id) {
         const response = await axios.get(`/orders/user/${user._id}`);
-        setOrders(response.data);
+        // Sort orders by createdAt in descending order (latest to oldest)
+        const sortedOrders = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setOrders(sortedOrders);
       }
     } catch (error) {
       console.error("Failed to fetch order history:", error);
@@ -39,7 +41,12 @@ const OrderHistoryPage = () => {
                   {order.items.map((item) => (
                     <li key={item.itemId} className="flex justify-between items-center">
                       <div className="flex items-center space-x-4">
-                        <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-lg" />
+                        <img 
+                          src={item.imageUrl || 'https://via.placeholder.com/64x64'}  // Fallback to placeholder image
+                          alt={item.name} 
+                          className="w-16 h-16 object-cover rounded-lg" 
+                          onError={(e) => { e.target.onerror = null; e.target.src='https://via.placeholder.com/64x64' }}  // Fallback on image load error
+                        />
                         <div>
                           <p className="text-gray-700">{item.name}</p>
                           <p className="text-gray-500">${item.price.toFixed(2)}</p>

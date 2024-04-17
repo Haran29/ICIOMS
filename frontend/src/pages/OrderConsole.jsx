@@ -74,6 +74,7 @@ const OrderConsole = () => {
   const generateBill = async () => {
     try {
       const orderData = {
+        orderId: new Date().getTime(), // Unique order ID (using timestamp for simplicity)
         items: selectedItems.map(item => ({
           itemId: item._id,
           name: item.name,
@@ -84,7 +85,7 @@ const OrderConsole = () => {
         totalAmount: calculateOverallTotal()
       };
 
-      const response = await axios.post("/save-order", orderData);
+      const response = await axios.post("/save-offline-order", orderData);
 
       if (response.status === 200) {
         setIsBillModalOpen(true);
@@ -92,7 +93,7 @@ const OrderConsole = () => {
         console.error("Failed to save order:", response.data);
       }
     } catch (error) {
-      console.error("Error generating bill:", error);
+      console.error("Error generating bill:", error.response ? error.response.data : error);
     }
   };
 

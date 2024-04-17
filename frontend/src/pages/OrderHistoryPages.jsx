@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const fallbackImageUrl = "https://via.placeholder.com/64x64"; // Fallback image URL
+
 const OrderHistoryPages = () => {
   const [orders, setOrders] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,7 +81,12 @@ const OrderHistoryPages = () => {
                   {order.items.map((item) => (
                     <li key={item.itemId} className="flex justify-between items-center">
                       <div className="flex items-center space-x-4">
-                        <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-lg" />
+                        <img 
+                          src={item.image || fallbackImageUrl}  // Use fallback image if item.image is missing
+                          alt={item.name} 
+                          className="w-16 h-16 object-cover rounded-lg" 
+                          onError={(e) => { e.target.onerror = null; e.target.src = fallbackImageUrl }}  // Fallback on image load error
+                        />
                         <div>
                           <p className="text-gray-700">{item.name}</p>
                           <p className="text-gray-500">${item.price.toFixed(2)}</p>

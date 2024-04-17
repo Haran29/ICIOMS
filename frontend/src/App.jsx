@@ -70,7 +70,7 @@ const App = () => {
         <DynamicNavBar />
         <Toaster position="top-center" reverseOrder={false} />
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<OurMenu />} />
           <Route path="/LoginPage" element={<LoginPage />} />
           <Route path="/SignUpPage" element={<SignUpPage />} />
           <Route path="/OrderOnlinePage" element={<OrderOnlinePage />} />
