@@ -1,5 +1,5 @@
 import React from "react";
-import Menu from "../component/Menu"
+import Menu from "../component/Menu";
 
 const OurMenu = () => {
   return (

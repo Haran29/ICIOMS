@@ -26,11 +26,17 @@ const Menu = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="container mx-auto px-4 py-8">
+        <h1 className="text-4xl font-semibold text-center mb-8">
+          Our Delicious Menu
+        </h1>
+        <p className="text-center text-gray-600 mb-6">
+          Explore our wide range of mouth-watering dishes. Use the search bar to find your favorites!
+        </p>
         <div className="flex justify-center mb-6">
-          <div className="relative w-full max-w-lg"> {/* Increased width to max-w-lg */}
+          <div className="relative w-full max-w-lg">
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Search dishes..."
               value={searchTerm}
               onChange={handleSearch}
               className="w-full h-10 pl-4 pr-12 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-blue-500"

@@ -28,7 +28,19 @@ const LoginPage = () => {
         const user = response.data;
        
         sessionStorage.setItem('user', JSON.stringify(user));
-        Navigate("/HomePage");
+        sessionStorage.setItem('role', user.role); 
+
+        if (user.role === 'admin') {
+          Navigate("/admin-dashboard");
+        } else if (user.role === 'user') {
+          Navigate("/");
+        } else if (user.role === "salesperson") {
+          Navigate("/OrderConsole");
+        } else if (user.role === "salesperson_manager") {
+          Navigate("/OrderConsole");
+        }else {
+          Navigate("/");
+        }
       }
     } catch (error) {
       console.log(error);

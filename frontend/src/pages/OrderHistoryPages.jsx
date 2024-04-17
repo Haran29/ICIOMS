@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const fallbackImageUrl = "https://via.placeholder.com/64x64"; // Fallback image URL
+const fallbackImageUrl = "https://via.placeholder.com/64x64";
 
 const OrderHistoryPages = () => {
   const [orders, setOrders] = useState([]);
@@ -62,10 +62,6 @@ const OrderHistoryPages = () => {
           />
         </div>
 
-        {/* Create New Order Link */}
-        <div className="mb-4">
-          <a href="/create-order" className="text-blue-500 underline">Create New Order</a>
-        </div>
 
         <div className="space-y-8">
           {filteredOrders.map((order) => (

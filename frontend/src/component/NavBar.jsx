@@ -13,7 +13,7 @@ const NavBar = () => {
       <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
         <div className="flex items-center space-x-3">
           <span className="self-center text-2xl font-semibold whitespace-nowrap">
-            <Link to="/" className="text-black hover:text-green-600">
+            <Link to="#" className="text-black hover:text-green-600">
               Vino IceCream
             </Link>
           </span>
