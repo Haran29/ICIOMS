@@ -55,13 +55,13 @@ const NavBar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/AboutUs" className="text-black hover:text-green-600">
+              <Link to="#" className="text-black hover:text-green-600">
                 About Us
               </Link>
             </li>
             <li>
               <Link
-                to="/ContactUs"
+                to="#"
                 className="text-black hover:text-green-600"
               >
                 Contact Us

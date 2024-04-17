@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const offlineOrderSchema = new mongoose.Schema({
     orderId: {
       type: String,

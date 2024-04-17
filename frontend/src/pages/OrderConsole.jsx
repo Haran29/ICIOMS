@@ -84,7 +84,7 @@ const OrderConsole = () => {
         })),
         totalAmount: calculateOverallTotal()
       };
-
+      
       const response = await axios.post("/save-offline-order", orderData);
 
       if (response.status === 200) {

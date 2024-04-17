@@ -1,6 +1,6 @@
 // Import the Order model
 const Order = require("../models/Order");
-
+const OfflineOrder = require("../models/offlineOrder")
 // Handle order creation
 const handleOrder = async (req, res) => {
   try {
@@ -111,7 +111,6 @@ const deleteOrder = async (req, res) => {
 const saveOfflineOrder =  async (req, res) => {
   try {
     const { orderId, items, totalAmount } = req.body;
-
     // Create a new offline order document
     const offlineOrder = new OfflineOrder({
       orderId,
