@@ -1,0 +1,41 @@
+
+.banner .swiper {
+    width: 500px;
+    height: 350px;
+  }
+  
+.banner .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+  }
+  
+  .banner .swiper-slide:nth-child(1n) {
+    background-image: url('/src/assets/bannerImages/img19.jpg');
+  }
+  
+  .banner .swiper-slide:nth-child(2n) {
+    background-image: url('/src/assets/bannerImages/img55.jpg');
+  }
+  
+  .banner .swiper-slide:nth-child(3n) {
+    background-image: url('/src/assets/bannerImages/img10.jpeg');
+  }
+  
+  .banner .swiper-slide:nth-child(4n) {
+    background-image: url('/src/assets/bannerImages/img26.jpg');
+  }
+  
+  .banner .swiper-slide:nth-child(5n) {
+    background-image: url('/src/assets/bannerImages/img2.jpeg');
+  }
+  
+  .banner .swiper-slide:nth-child(6n) {
+    background-image: url('/src/assets/bannerImages/img16.jpeg');
+  }
+  
+  

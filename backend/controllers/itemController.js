@@ -110,4 +110,19 @@ const generateReport = async (req, res) => {
   }
 };
 
-module.exports = { addItem, deleteItem, updateItem, getMenuItem, generateReport };
+const getItemById = async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const item = await Item.findById(itemId);
+    if (!item) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+    res.json(item);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch item details" });
+  }
+};
+
+
+module.exports = { addItem, deleteItem, updateItem, getMenuItem, generateReport, getItemById };
+

@@ -3,6 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const { addItem, deleteItem, updateItem, getMenuItem, generateReport } = require('../controllers/itemController');
+const { getItemById } = require('../controllers/itemController');
 
 const {
   test,
@@ -28,5 +29,7 @@ router.delete('/delete-item/:id', deleteItem);
 router.put('/update-item/:id', updateItem);
 // Generate Report Route
 router.get('/generate-report', generateReport);
+// Get single item by ID
+router.get('/get-item/:id', getItemById);
 
 module.exports = router;
