@@ -25,9 +25,7 @@ const Shop = () => {
                 <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                   {product.name}
                 </h5>
-                <p className="font-normal text-gray-700 dark:text-gray-400">
-                  {product.productDescription}
-                </p>
+                
                 <Link to={`/get-item/${product._id}`} >
                   <button className='bg-green-500 font-semibold text-white py-2 rounded px-24 '>See Details</button>
                 </Link>

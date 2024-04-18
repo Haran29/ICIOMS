@@ -62,7 +62,7 @@ const AllProductsPage = () => {
           </Table.Head>
           {allProducts.map((product, index) => (
             <Table.Body className="divide-y" key={product._id}>
-              <Table.Row className="bg-yellow-50 dark:border-gray-700 dark:bg-gray-800">
+              <Table.Row className="bg-gray-400 dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                   {index + 1}
                 </Table.Cell>
@@ -80,7 +80,7 @@ const AllProductsPage = () => {
       </div>
 
       <div className="flex justify-center">
-        <Button type="submit" onClick={generateReport} className="mt-5 bg-green-400 lg:w-[500px] rounded-lg">
+        <Button type="submit" onClick={generateReport} className="mt-5 bg-green-400 lg:w-[500px] rounded-lg hover:bg-green-600">
           Generate Report
         </Button>
       </div>

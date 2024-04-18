@@ -1,17 +1,30 @@
-// eslint-disable-next-line no-unused-vars
-import React from 'react'
-import Banner from '../components/Banner'
-import BestSellerProducts from './BestSellerProducts'
-import FavProduct from './FavProduct'
+/* eslint-disable no-unused-vars */
+
+
+import React, { useState } from 'react';
+import Banner from '../components/Banner';
+import BestSellerProducts from './BestSellerProducts';
+import FavProduct from './FavProduct';
 
 const Home = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearch = () => {
+    // Perform search action here, if needed
+    console.log("Search query:", searchQuery);
+  };
+
   return (
     <div>
-      <Banner/>
-      <BestSellerProducts/>
-      <FavProduct/>
+      <Banner onSearch={setSearchQuery} onSearchButtonClick={handleSearch} />
+      <BestSellerProducts searchQuery={searchQuery} />
+      <FavProduct />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

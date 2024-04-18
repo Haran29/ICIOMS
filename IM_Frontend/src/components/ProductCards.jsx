@@ -64,7 +64,7 @@ const ProductCards = ({headline,products}) => {
                         <p>{product.flavor}</p>
                         </div>
                         <div>
-                            <p>Rs.100.00</p>
+                            <p>Rs.{product.price}</p>
                         </div>
                     </div>
                 </Link>

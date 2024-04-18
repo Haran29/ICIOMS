@@ -38,7 +38,7 @@ const ManageProductPage = () => {
         </Table.Head>
         {
           allProducts.map((product,index) => <Table.Body className="divide-y" key={product._id}>
-              <Table.Row className="bg-yellow-50 dark:border-gray-700 dark:bg-gray-800">
+              <Table.Row className="bg-green-200 dark:border-gray-700 dark:bg-gray-800">
             <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
               {index + 1}
             </Table.Cell>

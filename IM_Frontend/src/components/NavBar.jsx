@@ -48,9 +48,9 @@ const NavBar = () => {
         {link:"SignIn",path:"/SignInPage"},
     ]
   return (
-    <header className='w-full bg-transparent fixed top-0 left-0 right-0 transition-all ease-in duration-300'>
-      <nav className={`py-4 lg:px-24 px-4 ${isSticky ? "sticky top-0 left-0 right-0 bg-green-500" : ""}`}>
-        <div className='flex justify-between items-center text-base gap-8'>
+    <header className='w-full bg-transparent fixed top-0 left-0 right-0 transition-all ease-in duration-300 bg-green-500'>
+      <nav className={`py-4 bg-green-500 lg:px-24 px-4 ${isSticky ? "sticky top-0 left-0 right-0  " : ""}`}>
+        <div className='flex justify-between items-center text-base gap-8 '>
             {/*logo*/}
             <Link to="/" className='text-2xl font-bold text-black flex items-center gap-2'>Vino IceCream</Link>
 
