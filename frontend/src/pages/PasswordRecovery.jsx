@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Image from "../assets/greenice.jpg";
 
 const PasswordRecovery = () => {
   const [email, setEmail] = useState('');

@@ -38,17 +38,7 @@ const Admindash = () => {
     setFilteredUsers(filteredResults);
   }, [searchTerm, users]);
 
-  const generateReport = async () => {
-    try {
-      const response = await axios.get('/api/users/reports');
-      const reportData = response.data;
-      console.log(reportData); // Log the report data
-      setMessage('Report generated successfully');
-      navigate("/UserReport");
-    } catch (error) {
-      setError('Failed to generate report');
-    }
-  };
+ 
 
   // Function to delete a user
   const deleteUser = async (userId) => {
@@ -69,12 +59,7 @@ const Admindash = () => {
     
     <div className="container mx-auto px-4">
       <div className="flex justify-between items-center my-8">
-        <button 
-          onClick={generateReport}
-          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow"
-        >
-          Generate Report
-        </button>
+        
         <div className="relative">
           <input
             type="text"

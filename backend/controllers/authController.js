@@ -135,14 +135,16 @@ const updateUser = async (req, res) => {
 
 //--------- 
 
-// Route to send OTP for password reset
+// Create a transporter for sending emails
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'ssavindi660@gmail.com', // Replace with your email
-    pass: 'n', // Replace with your password
+    user: 'ssavindi660@gmail.com', 
+    pass: 'Sanka_99', 
   },
 });
+
+// Route to send OTP for password reset
 const sendotp = async (req, res) => {
   const { email } = req.body;
   const OTP = otpGenerator.generate(6, { upperCase: false, specialChars: false });
@@ -151,7 +153,7 @@ const sendotp = async (req, res) => {
     // Save OTP to the database
     await User.findOneAndUpdate({ email }, { otp: OTP }, { upsert: true });
 
-    // Send OTP via email   
+    // Send OTP via email
     await transporter.sendMail({
       from: 'ssavindi660@gmail.com', // Replace with your email
       to: email,
@@ -171,21 +173,23 @@ const resettpassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
   try {
-    // Check if the OTP is valid
+    // Find the user by email and OTP
     const user = await User.findOne({ email, otp });
     if (!user) {
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 
-    // Update the user's password
-    await User.updateOne({ email }, { $set: { otp: null, password: newPassword } });
+    // Update the user's password and remove OTP
+    user.password = newPassword;
+    user.otp = null;
+    await user.save();
+
     res.json({ message: 'Password reset successfully' });
   } catch (error) {
     console.error('Error resetting password:', error);
     res.status(500).json({ message: 'Failed to reset password' });
   }
 };
-
 
 //---------------------
 

@@ -23,8 +23,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
         default: 'user' 
-    },
-    
+            },
+   
 });
 
   // Define model for password reset requests
