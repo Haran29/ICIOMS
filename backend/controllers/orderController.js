@@ -2,7 +2,7 @@
 const Order = require("../models/Order");
 const OfflineOrder = require("../models/offlineOrder")
 // Handle order creation
-const handleOrder = async (req, res) => {
+/*const handleOrder = async (req, res) => {
   try {
     const {
       userId,
@@ -43,7 +43,54 @@ const handleOrder = async (req, res) => {
       .status(500)
       .json({ message: "Failed to create order", error: error.message });
   }
+};*/
+
+
+const handleOrder = async (req, res) => {
+  try {
+    const {
+      userId,
+      phoneNumber,
+      postalCode,
+      city,
+      streetAddress,
+      items,
+      totalAmount,
+      status,
+    } = req.body;
+
+    // Map through the items to extract itemId, quantity, price, name, and imageUrl
+    const orderItems = items.map(item => ({
+      itemId: item.itemId,
+      quantity: item.quantity,
+      price: item.price,
+      name: item.name,
+      imageUrl: item.imageUrl
+    }));
+
+    const newOrder = new Order({
+      userId,
+      phoneNumber,
+      postalCode,
+      city,
+      streetAddress,
+      items: orderItems,
+      totalAmount,
+      status,
+    });
+
+    const savedOrder = await newOrder.save();
+
+    // Send only the id of the saved order
+    res.status(201).json({ orderId: savedOrder._id }); // Assuming _id is the ID field for the Order model
+  } catch (error) {
+    console.error("Error creating order:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to create order", error: error.message });
+  }
 };
+
 
 const getOrder = async (req, res) => {
   const userId = req.params.userId;
@@ -138,46 +185,35 @@ const saveOfflineOrder =  async (req, res) => {
 };
 
 const updateOrder = async (req, res) => {
-  const { id } = req.params;
-  const { status, items } = req.body;
+  const orderId = req.params.id;
+  const updatedData = req.body;
 
   try {
-    let order = await Order.findById(id);
-
+    // Validate if order exists
+    const order = await Order.findById(orderId); // Use Order here
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Update order status
-    if (status) {
-      order.status = status;
-    }
+    // Update the order
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, updatedData, { new: true }); // Use Order here
 
-    // Update item quantities and selections
-    if (items && items.length > 0) {
-      items.forEach(updatedItem => {
-        const item = order.items.find(item => item.itemId.toString() === updatedItem.itemId);
-
-        if (item) {
-          if (updatedItem.hasOwnProperty('quantity')) {
-            item.quantity = updatedItem.quantity;
-          }
-          if (updatedItem.hasOwnProperty('selected')) {
-            item.selected = updatedItem.selected;
-          }
-        }
+    // Calculate total amount if items are updated
+    if (updatedData.items) {
+      let totalAmount = 0;
+      updatedData.items.forEach(item => {
+        totalAmount += item.quantity * item.price;
       });
+      updatedOrder.totalAmount = totalAmount;
+      await updatedOrder.save();
     }
 
-    await order.save();
-
-    res.status(200).json({ message: 'Order updated successfully', order });
+    res.status(200).json(updatedOrder);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ message: 'Failed to update order', error: error.message });
   }
 };
-
 module.exports = {
   handleOrder,
   getOrder,

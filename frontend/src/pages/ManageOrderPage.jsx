@@ -6,7 +6,8 @@ const ManageOrdersPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [editedOrder, setEditedOrder] = useState(null);
+  const [editOrderData, setEditOrderData] = useState(null);
+  const [editedItems, setEditedItems] = useState([]);
 
   useEffect(() => {
     fetchOrderHistory();
@@ -22,18 +23,12 @@ const ManageOrdersPage = () => {
     }
   };
 
-  const updateOrder = async () => {
-    if (!editedOrder || !editedOrder._id) {
-      console.error("Cannot update order: Edited order or order ID is null.");
-      return;
-    }
-    
+  const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      await axios.put(`/orders/${editedOrder._id}`, editedOrder);
+      await axios.put(`/orders/${orderId}`, { status: newStatus });
       fetchOrderHistory();
-      setEditedOrder(null); // Close the modal or form after successful update
     } catch (error) {
-      console.error("Failed to update order:", error);
+      console.error("Failed to update order status:", error);
     }
   };
 
@@ -46,33 +41,26 @@ const ManageOrdersPage = () => {
     }
   };
 
-  const editOrder = (order) => {
-    setEditedOrder(order);
+  const editOrder = async (orderId, updatedData) => {
+    try {
+      await axios.put(`/orders/${orderId}`, updatedData);
+      fetchOrderHistory();
+      setEditOrderData(null); // Close edit form after successful update
+    } catch (error) {
+      console.error("Failed to update order:", error);
+    }
   };
 
-  const handleEditChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const [fieldName, fieldIndex, fieldProp] = name.split('.');
-    
-    if (!editedOrder) {
-      return;
-    }
+  const updateEditedItem = (itemId, newData) => {
+    const updatedItems = editedItems.map(item => 
+      item.itemId === itemId ? { ...item, ...newData } : item
+    );
+    setEditedItems(updatedItems);
+  };
 
-    if (type === 'checkbox') {
-      const updatedItems = [...editedOrder.items];
-      updatedItems[fieldIndex][fieldProp] = checked;
-      setEditedOrder(prevOrder => ({
-        ...prevOrder,
-        items: updatedItems
-      }));
-    } else {
-      const updatedItems = [...editedOrder.items];
-      updatedItems[fieldIndex][fieldProp] = value;
-      setEditedOrder(prevOrder => ({
-        ...prevOrder,
-        items: updatedItems
-      }));
-    }
+  const deleteEditedItem = (itemId) => {
+    const updatedItems = editedItems.filter(item => item.itemId !== itemId);
+    setEditedItems(updatedItems);
   };
 
   const filteredOrders = orders.filter(order => 
@@ -80,6 +68,16 @@ const ManageOrdersPage = () => {
     (!startDate || new Date(order.createdAt) >= new Date(startDate)) &&
     (!endDate || new Date(order.createdAt) <= new Date(endDate))
   );
+
+  const openEditForm = (order) => {
+    setEditOrderData(order);
+    setEditedItems(order.items);
+  };
+
+  const closeEditForm = () => {
+    setEditOrderData(null);
+    setEditedItems([]);
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -123,9 +121,8 @@ const ManageOrdersPage = () => {
                 <div className="mb-4">
                   <label className="text-gray-600">Status:</label>
                   <select 
-                    name="status"
-                    value={editedOrder?.status || order.status}
-                    onChange={handleEditChange}
+                    value={order.status}
+                    onChange={(e) => updateOrderStatus(order._id, e.target.value)}
                     className={`ml-2 font-semibold ${order.status === 'completed' ? 'text-green-600' : 'text-red-600'}`}
                   >
                     <option value="pending">Pending</option>
@@ -133,13 +130,14 @@ const ManageOrdersPage = () => {
                     <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
-                <button onClick={() => editOrder(order)} className="text-blue-600 hover:text-blue-700">Edit Order</button>
-                <button onClick={() => deleteOrder(order._id)} className="text-red-600 hover:text-red-700 ml-4">Delete Order</button>
+                <button onClick={() => openEditForm(order)} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700 text-lg mr-4">Edit Order</button>
+                <button onClick={() => deleteOrder(order._id)} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700 text-lg ">Delete Order</button>
               </div>
+              
               <div className="p-6">
                 <h4 className="text-lg font-semibold mb-4">Items:</h4>
                 <ul className="space-y-4">
-                  {order.items.map((item, index) => (
+                  {order.items.map((item) => (
                     <li key={item.itemId} className="flex justify-between items-center">
                       <div className="flex items-center space-x-4">
                         <img 
@@ -153,33 +151,108 @@ const ManageOrdersPage = () => {
                           <p className="text-gray-500">${item.price.toFixed(2)}</p>
                         </div>
                       </div>
-                      <div className="flex items-center">
+                      <div className="flex items-center space-x-4">
                         <input
                           type="number"
-                          name={`items.${index}.quantity`}
-                          value={editedOrder?.items?.[index]?.quantity || item.quantity}
-                          onChange={handleEditChange}
-                          className="border p-2 rounded-md mr-4 w-16 text-center"
-                          min="1"
+                          defaultValue={item.quantity}
+                          onChange={(e) => updateEditedItem(item.itemId, { quantity: parseInt(e.target.value, 10) })}
+                          className="border p-2 rounded-md w-16 text-center"
                         />
-                        <input
-                          type="checkbox"
-                          name={`items.${index}.selected`}
-                          checked={editedOrder?.items?.[index]?.selected || item.selected}
-                          onChange={handleEditChange}
-                          className="mr-2"
-                        />
+                        <button onClick={() => deleteEditedItem(item.itemId)} className="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700">Delete</button>
                       </div>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="p-6">
-                <button onClick={updateOrder} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update Order</button>
-              </div>
             </div>
           ))}
         </div>
+
+        {/* Edit Order Form/Modal */}
+        {editOrderData && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-8 rounded-lg shadow-lg">
+              <h2 className="text-2xl font-semibold mb-4">Edit Order</h2>
+
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                // Extract form data and pass to editOrder
+                editOrder(editOrderData._id, {
+                  status: e.target.status.value,
+                  totalAmount: parseFloat(e.target.totalAmount.value),
+                  items: editedItems,
+                });
+              }}>
+                <div className="mb-4">
+                  <label className="text-gray-600 mr-2">Status:</label>
+                  <select name="status" defaultValue={editOrderData.status}>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+
+                <div className="mb-4">
+                  <label className="text-gray-600 mr-2">Total Amount:</label>
+                  <input 
+                    type="number" 
+                    name="totalAmount" 
+                    step="0.01" 
+                    defaultValue={editOrderData.totalAmount.toFixed(2)}
+                    className="border p-2 rounded-md"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="text-gray-600 mr-2">Date:</label>
+                  <input 
+                    type="text" 
+                    name="createdAt" 
+                    readOnly
+                    value={new Date(editOrderData.createdAt).toLocaleDateString()}
+                    className="border p-2 rounded-md"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <h4 className="text-lg font-semibold mb-2">Edit Items:</h4>
+                  <ul className="space-y-4">
+                    {editedItems.map((item) => (
+                      <li key={item.itemId} className="flex justify-between items-center">
+                        <div className="flex items-center space-x-4">
+                          <img 
+                            src={item.imageUrl || 'https://via.placeholder.com/64x64'}
+                            alt={item.name} 
+                            className="w-16 h-16 object-cover rounded-lg" 
+                            onError={(e) => { e.target.onerror = null; e.target.src='https://via.placeholder.com/64x64' }}
+                          />
+                          <div>
+                            <p className="text-gray-700">{item.name}</p>
+                            <p className="text-gray-500">${item.price.toFixed(2)}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                          <input
+                            type="number"
+                            defaultValue={item.quantity}
+                            onChange={(e) => updateEditedItem(item.itemId, { quantity: parseInt(e.target.value, 10) })}
+                            className="border p-2 rounded-md w-16 text-center"
+                          />
+                          <button onClick={() => deleteEditedItem(item.itemId)} className="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700">Delete</button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex justify-end">
+                  <button type="button" onClick={closeEditForm} className="px-4 py-2 bg-red-600 text-white rounded-md mr-2">Cancel</button>
+                  <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

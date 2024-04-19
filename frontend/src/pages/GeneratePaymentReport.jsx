@@ -3,39 +3,40 @@ import axios from "axios";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
-const GenerateReport = () => {
-  const [orders, setOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
+const GeneratePaymentReport = () => {
+  const [payments, setPayments] = useState([]);
+  const [filteredPayments, setFilteredPayments] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const componentRef = useRef(null);
 
   useEffect(() => {
-    fetchOrderHistory();
+    fetchAllPayments()
   }, []);
 
   useEffect(() => {
-    filterOrders();
-  }, [orders, searchQuery, startDate, endDate]);
+    filterPayments();
+  }, [payments, searchQuery, startDate, endDate]);
 
-  const fetchOrderHistory = async () => {
+  const fetchAllPayments = async () => {
     try {
-      const response = await axios.get("/orders");
-      setOrders(response.data);
+      const response = await axios.get('/payments');
+      const sortedPayments = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setPayments(sortedPayments);
     } catch (error) {
-      console.error("Failed to fetch order history:", error);
+      console.error("Failed to fetch payments:", error);
     }
   };
 
-  const filterOrders = () => {
-    const filtered = orders.filter(
-      (order) =>
-        order._id.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        (!startDate || new Date(order.createdAt) >= new Date(startDate)) &&
-        (!endDate || new Date(order.createdAt) <= new Date(endDate))
+  const filterPayments = () => {
+    const filtered = payments.filter(
+      (payment) =>
+        payment._id.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (!startDate || new Date(payment.createdAt) >= new Date(startDate)) &&
+        (!endDate || new Date(payment.createdAt) <= new Date(endDate))
     );
-    setFilteredOrders(filtered);
+    setFilteredPayments(filtered);
   };
 
   const generatePDF = () => {
@@ -53,7 +54,7 @@ const GenerateReport = () => {
         format: [canvas.width, canvas.height],
       });
       pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
-      pdf.save("order_report.pdf");
+      pdf.save("payment_report.pdf");
     });
   };
 
@@ -65,14 +66,14 @@ const GenerateReport = () => {
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="max-w-4xl w-full p-8 bg-white rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold mb-4 text-center">
-          Order History
+          Payment History
         </h2>
 
         {/* Search Bar */}
         <div className="mb-4">
           <input
             type="text"
-            placeholder="Search by Order ID..."
+            placeholder="Search by Payment ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="border p-2 rounded-md w-full"
@@ -112,32 +113,31 @@ const GenerateReport = () => {
           {/* Dynamic Heading */}
           {startDate && endDate && (
             <h3 className="text-xl font-semibold mb-6 text-center">
-              Order History ({formatDate(startDate)} - {formatDate(endDate)})
+              Payment History ({formatDate(startDate)} - {formatDate(endDate)})
             </h3>
           )}
-          {filteredOrders.map((order) => (
+          {filteredPayments.map((payment) => (
             <div
-              key={order._id}
+              key={payment._id}
               className="border rounded-lg overflow-hidden shadow-md"
             >
               <div className="p-6 bg-gray-100">
                 <h3 className="text-xl font-semibold mb-4">
-                  Order ID: {order._id}
+                  Payment ID: {payment._id}
                 </h3>
                 <p className="text-gray-600 mb-2">
-                  Date: {formatDate(order.createdAt)}
+                  Date: {formatDate(payment.createdAt)}
                 </p>
                 <p className="text-gray-600 mb-2">
-                  Total Amount:{" "}
+                  Amount:{" "}
                   <span className="font-semibold">
-                    ${order.totalAmount.toFixed(2)}
+                    ${payment.amount.toFixed(2)}
                   </span>
                 </p>
-                <div className="mb-4">
-                  <label className="text-gray-600">
-                    Status: {order.status}
-                  </label>
-                </div>
+                <p className="text-gray-600 mb-4">
+                  Payment Method:{" "}
+                  <span className="font-semibold">{payment.Method}</span>
+                </p>
               </div>
             </div>
           ))}
@@ -147,4 +147,4 @@ const GenerateReport = () => {
   );
 };
 
-export default GenerateReport;
+export default GeneratePaymentReport;

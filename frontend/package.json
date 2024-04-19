@@ -30,7 +30,8 @@
     "react-to-print": "^2.15.1",
     "react-toastify": "^10.0.5",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.56",

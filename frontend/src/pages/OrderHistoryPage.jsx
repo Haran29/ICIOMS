@@ -97,7 +97,7 @@ const OrderHistoryPage = () => {
                     <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
-                <button onClick={() => deleteOrder(order._id)} className="text-red-600 hover:text-red-700">Delete Order</button>
+                <button onClick={() => deleteOrder(order._id)} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg ">Delete Order</button>
               </div>
               <div className="p-6">
                 <h4 className="text-lg font-semibold mb-4">Items:</h4>

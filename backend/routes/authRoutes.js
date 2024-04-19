@@ -16,10 +16,17 @@ const {
   updateStatus,
   deleteOrder,
   updateOrder,
-  saveOfflineOrder
+  saveOfflineOrder,
 } = require("../controllers/orderController");
 
-const { handlePayment } = require("../controllers/paymentController");
+const {
+  handlePayment,
+  savePayment,
+  getPaymentsByUserId,
+  fetchAllPayment,
+  updatePayment ,
+  deletePayment
+} = require("../controllers/paymentController");
 const {
   addToCart,
   getcartitems,
@@ -64,12 +71,19 @@ router.delete("/cart/clear/:userId", clearCart);
 router.post("/remove-from-cart", removefromcart);
 router.get("/getcartitemsfororderpage/:userId", getcartitemsfororderpage);
 router.get("/test", () => console.log("Testing2"));
-router.post("/simulate-payment", handlePayment);
 router.post("/orders/create", handleOrder);
 router.get("/orders/user/:userId", getOrder);
-router.get("/orders",getAllorder);
-router.put('/orders/:orderId',updateStatus);
-//router.put('/orders/:orderId',updateOrder);
-router.delete('/orders/:orderId',deleteOrder)
-router.post('/save-offline-order',saveOfflineOrder)
+router.get("/orders", getAllorder);
+//router.put("/orders/:orderId", updateStatus);
+router.put('/orders/:orderId',updateOrder);
+router.delete("/orders/:orderId", deleteOrder);
+router.post("/save-offline-order", saveOfflineOrder);
+
+//payment
+router.post("/payments/create", savePayment);
+router.post("/simulate-payment", handlePayment);
+router.get("/payments/user/:userId", getPaymentsByUserId);
+router.get("/payments", fetchAllPayment);
+router.put('/payments/:id',updatePayment );
+router.delete('/payments/:id',deletePayment )
 module.exports = router;

@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import NavBar from "./NavBar";
 import UserNavBar from "./UserNavBar";
 import SalesPersonManagerNavBar from "./SalesPersonManagerNavBar"
+import PaymentManagerNavBar from "./PaymentManagerNavBar";
 import SalesPersonNavBar from "./SalesPersonNavBar";
 
 const DynamicNavBar = () => {
@@ -35,6 +36,8 @@ const DynamicNavBar = () => {
       return <SalesPersonNavBar />; 
     } else if (user.role === "salesperson_manager") {
       return <SalesPersonManagerNavBar />; 
+    }else if (user.role === "PaymentManager") {
+      return <PaymentManagerNavBar />; 
     } else {
       return <UserNavBar />; 
     }
