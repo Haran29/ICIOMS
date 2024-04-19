@@ -136,11 +136,54 @@ const saveOfflineOrder =  async (req, res) => {
     });
   }
 };
+
+const updateOrder = async (req, res) => {
+  const { id } = req.params;
+  const { status, items } = req.body;
+
+  try {
+    let order = await Order.findById(id);
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Update order status
+    if (status) {
+      order.status = status;
+    }
+
+    // Update item quantities and selections
+    if (items && items.length > 0) {
+      items.forEach(updatedItem => {
+        const item = order.items.find(item => item.itemId.toString() === updatedItem.itemId);
+
+        if (item) {
+          if (updatedItem.hasOwnProperty('quantity')) {
+            item.quantity = updatedItem.quantity;
+          }
+          if (updatedItem.hasOwnProperty('selected')) {
+            item.selected = updatedItem.selected;
+          }
+        }
+      });
+    }
+
+    await order.save();
+
+    res.status(200).json({ message: 'Order updated successfully', order });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 module.exports = {
   handleOrder,
   getOrder,
   getAllorder,
   updateStatus,
   deleteOrder,
-  saveOfflineOrder
+  saveOfflineOrder,
+  updateOrder 
 };

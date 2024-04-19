@@ -17,8 +17,8 @@ import GenerateReport from "./pages/GenerateReport";
 import OrderHistoryPages from "./pages/OrderHistoryPages";
 import SalesStatisticsPage from "./pages/SalesStatisticsPage";
 import Footer from "./component/Footer";
-import DynamicNavBar  from "./component/DynamicNavBar"
-
+import DynamicNavBar from "./component/DynamicNavBar";
+import ManageOrdersPage from "./pages/ManageOrderPage";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -47,6 +47,7 @@ const App = () => {
             path="/SalesStatisticsPage"
             element={<SalesStatisticsPage />}
           />
+          <Route path="/ManageOrdersPage" element={<ManageOrdersPage />} />
         </Routes>
         <Footer />
       </UserProvider>
