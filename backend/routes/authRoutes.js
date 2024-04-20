@@ -74,8 +74,8 @@ router.get("/test", () => console.log("Testing2"));
 router.post("/orders/create", handleOrder);
 router.get("/orders/user/:userId", getOrder);
 router.get("/orders", getAllorder);
-//router.put("/orders/:orderId", updateStatus);
-router.put('/orders/:orderId',updateOrder);
+router.put("/orders/:orderId", updateStatus);
+//router.put('/orders/:orderId',updateOrder);
 router.delete("/orders/:orderId", deleteOrder);
 router.post("/save-offline-order", saveOfflineOrder);
 
