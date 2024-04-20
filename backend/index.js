@@ -4,6 +4,7 @@ const express = require("express");
 const session = require('express-session');
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
+const UserRoutes = require("./routes/UserRoutes");
 const mongoose = require("mongoose");
 require('dotenv').config();
 const cookieParser = require("cookie-parser");
@@ -40,6 +41,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use("/", authRoutes);
+app.use("/Savindi", UserRoutes);
 
 const Port = 8000;
 app.listen(Port, () => console.log(`Server is running on port ${Port}`));

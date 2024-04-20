@@ -23,6 +23,10 @@ import ManageOrdersPage from "./pages/ManageOrderPage";
 import PaymentList from "./pages/PaymentList"
 import ManagePayment from "./pages/ManagePayment"
 import GeneratePaymentReport from "./pages/GeneratePaymentReport"
+import ManageProfile from "./pages/ManageProfile";
+import UserReport from "./pages/UserReport";
+import Adduser from "./pages/Adduser"
+import Admindash from "./pages/Admindash";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -56,6 +60,11 @@ const App = () => {
           <Route path="/PaymentList" element={<PaymentList />} />\
           <Route path="/ManagePayment" element={<ManagePayment />} />
           <Route path="/GeneratePaymentReport" element={<GeneratePaymentReport/>} />
+          <Route path="/Adduser" element={<Adduser/>} />
+          <Route path="/Admindash" element={<Admindash/>} />
+          <Route path="/ManageProfile" element={<ManageProfile/>} />
+          <Route path="/UserReport" element={<UserReport/>} />
+
         </Routes>
         <Footer />
       </UserProvider>
