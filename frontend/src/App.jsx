@@ -16,8 +16,16 @@ import UserProvider from "../context/userContext";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 
-axios.defaults.baseURL = "http://localhost:8000";
+import SuplierList from "./pages/Supplier-pages/SuplierList";
+import AddSupplier from "./pages/Supplier-pages/AddSupplier";
+import UpdateSupplier from "./pages/Supplier-pages/UpdateSupplier";
+import PlaceOrder from "./pages/Supplier-pages/PlaceOrder";
+import ConformOrder from "./pages/Supplier-pages/ConformOrder";
+import OngoingOrder from "./pages/Supplier-pages/OngoingOrder";
+import OrderHistory from "./pages/Supplier-pages/OrderHistory";
+axios.defaults.baseURL = "http://localhost:9000";
 axios.defaults.withCredentials = true;
+
 
 const App = () => {
   const { user } = useContext(UserContext);
@@ -35,9 +43,27 @@ const App = () => {
           <Route path="/AboutUs" element={<AboutUs />} />
           <Route path="/ContactUS" element={<ContactUS />} />
           <Route path="/Dashboard" element={<Dashboard />} />
+
+
+          <Route path="/list-suplier" element={<SuplierList/>}/>
+          <Route path="/add-supplier" element={<AddSupplier/>}/>
+          <Route path="/update-supplier/:supplierid" element={<UpdateSupplier/>}/>
+
+          <Route path="/place-order" element={<PlaceOrder/>}/>
+          <Route path="/choose-place-order/:supplierid" element={<ConformOrder/>}/>
+          <Route path="/ongoing-order" element={<OngoingOrder/>}/>
+          <Route path="/order-history" element={<OrderHistory/>}/>
+          
+
+          
+          
+          
         </Routes>
       </UserProvider>
-    </>
+
+        </>
+
+    
   );
 };
 
