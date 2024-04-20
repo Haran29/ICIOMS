@@ -27,6 +27,9 @@ import ManageProfile from "./pages/ManageProfile";
 import UserReport from "./pages/UserReport";
 import Adduser from "./pages/Adduser"
 import Admindash from "./pages/Admindash";
+import AddFeedback from "./component/AddFeedback"
+import UpdateFeedback from "./component/UpdateFeedback"
+import ViewAllFeedbacks from "./component/ViewAllFeedbacks"
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -64,6 +67,11 @@ const App = () => {
           <Route path="/Admindash" element={<Admindash/>} />
           <Route path="/ManageProfile" element={<ManageProfile/>} />
           <Route path="/UserReport" element={<UserReport/>} />
+
+
+          <Route path="/AddFeedback" element={<AddFeedback/>} />
+          <Route path="/ManageFeedback" element={<UpdateFeedback/>} />
+          <Route path="/ViewFeedback" element={<ViewAllFeedbacks/>} />
 
         </Routes>
         <Footer />

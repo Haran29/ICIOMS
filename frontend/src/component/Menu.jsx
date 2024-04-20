@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaSearch } from "react-icons/fa";
+import ViewProductRatingCount from './ViewProductRatingCount'; // Import the component
 
 const Menu = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedProductName, setSelectedProductName] = useState(""); // State to store selected product name
 
   useEffect(() => {
     fetchMenuItems();
@@ -21,6 +23,10 @@ const Menu = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleProductClick = (productName) => {
+    setSelectedProductName(productName); // Set selected product name to fetch rating count
   };
 
   return (
@@ -52,7 +58,8 @@ const Menu = () => {
             .map((item) => (
               <div
                 key={item._id}
-                className="flex flex-col items-start p-4 bg-white rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
+                className="flex flex-col items-start p-4 bg-white rounded-lg shadow-lg transition duration-300 transform hover:scale-105 cursor-pointer"
+                onClick={() => handleProductClick(item.name)} // Handle product click
               >
                 <img
                   src={item.image}
@@ -63,6 +70,9 @@ const Menu = () => {
                   <h3 className="text-lg font-semibold mb-1">{item.name}</h3>
                   <p className="text-gray-600">${item.price}</p>
                 </div>
+                {selectedProductName === item.name && ( // Display rating count for selected product name
+                  <ViewProductRatingCount productName={selectedProductName} />
+                )}
               </div>
             ))}
         </div>

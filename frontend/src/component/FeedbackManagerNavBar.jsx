@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaShoppingCart, FaUser } from "react-icons/fa"; 
+import { FaUser } from "react-icons/fa";
 
-const UserNavBar = () => {
+const FeedbackManagerNavBar = () => {
   const Navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -32,67 +32,26 @@ const UserNavBar = () => {
         <div className="hidden md:flex-1 md:flex md:items-center md:justify-center">
           <ul className="font-medium flex space-x-8">
             <li>
-              <Link
-                to="/OrderOnlinePage"
-                className="text-black hover:text-green-600"
-              >
-                OrderOnline
+              <Link to="/ViewFeedback" className="text-black hover:text-green-600">
+                View Feedback
               </Link>
             </li>
             <li>
-              <Link to="#" className="text-black hover:text-green-600">
-                Delivery
-              </Link>
-            </li>
-            <li>
-              <Link to="/OurMenu" className="text-black hover:text-green-600">
-                OurMenu
-              </Link>
-            </li>
-            <li>
-              <Link to="#" className="text-black hover:text-green-600">
-                Gift Cards
-              </Link>
-            </li>
-            <li>
-              <Link to="#" className="text-black hover:text-green-600">
-                AboutUs
-              </Link>
-            </li>
-            <li>
-              <Link to="#" className="text-black hover:text-green-600">
-                ContactUs
+              <Link to="/ManageFeedback" className="text-black hover:text-green-600">
+                Manage Feedback
               </Link>
             </li>
           </ul>
         </div>
         <div className="flex items-center space-x-3 ml-auto relative">
-          <Link to="/CartPages" className="text-black hover:text-green-600" style={{ marginRight: "10px" }}>
-            <FaShoppingCart /> {/* Cart icon */}
-          </Link>
           <div className="relative">
             <FaUser className="text-black hover:text-green-600 cursor-pointer" onClick={toggleDropdown} /> {/* Profile icon */}
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10">
                 <ul className="list-reset">
                   <li>
-                    <Link to="/OrderHistory" className="block px-4 py-2 text-black hover:bg-gray-200">
-                      Order History
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/PaymentList" className="block px-4 py-2 text-black hover:bg-gray-200">
-                     Payment History
-                    </Link>
-                  </li>
-                  <li>
                     <Link to="/ManageProfile" className="block px-4 py-2 text-black hover:bg-gray-200">
                       Manage Profile
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/AddFeedback" className="block px-4 py-2 text-black hover:bg-gray-200">
-                     Add Feedback
                     </Link>
                   </li>
                   <li>
@@ -110,4 +69,4 @@ const UserNavBar = () => {
   );
 };
 
-export default UserNavBar;
+export default FeedbackManagerNavBar;
