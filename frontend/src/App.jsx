@@ -11,18 +11,26 @@ import Dashboard from "./pages/Dashboard";
 import NavBar from "./component/NavBar";
 import UserNavBar from "./component/UserNavBar";
 import CartPage from "./pages/CartPage";
-import OrderConsole from "./pages/OrderConsole"
+import OrderConsole from "./pages/OrderConsole";
 import axios from "axios";
 import { Toaster } from "react-hot-toast";
 import UserProvider from "../context/userContext";
-import OrderHistory from "./pages/OrderHistory"
-import OrderHistoryPage from "./pages/OrderHistoryPage"
-import GenerateReport from "./pages/GenerateReport"
-import SalesPersonManagerNavBar from "./component/SalesPersonManagerNavBar"
+import OrderHistory from "./pages/OrderHistory";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
+import GenerateReport from "./pages/GenerateReport";
+import SalesPersonManagerNavBar from "./component/SalesPersonManagerNavBar";
 import SalesPersonNavBar from "./component/SalesPersonNavBar";
-import OrderHistoryPages from "./pages/OrderHistoryPages"
-import SalesStatisticsPage from "./pages/SalesStatisticsPage"
+import OrderHistoryPages from "./pages/OrderHistoryPages";
+import SalesStatisticsPage from "./pages/SalesStatisticsPage";
 import Footer from "./component/Footer";
+
+import Home from "./pages/Home";
+import CreateBatch from "./pages/CreateBatch";
+import UpdateBatch from "./pages/UpdateBatch";
+import ViewBatch from "./pages/ViewBatch";
+import QMGenerateReport from "./pages/QMGenerateReport";
+import QMNavBar from "./component/QMNavBar";
+import QMHome from "./pages/QMHome";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -56,6 +64,8 @@ const DynamicNavBar = () => {
       return <SalesPersonNavBar />; // Render SalesPersonNavBar for salesperson
     } else if (user.role === "salesperson_manager") {
       return <SalesPersonManagerNavBar />; // Render SalesPersonManagerNavBar for salesperson manager
+    } else if (user.name === "Christy") {
+      return <QMNavBar />;
     } else {
       return <UserNavBar />; // Render UserNavBar for other users
     }
@@ -79,15 +89,23 @@ const App = () => {
           <Route path="/AboutUs" element={<AboutUs />} />
           <Route path="/ContactUS" element={<ContactUS />} />
           <Route path="/Dashboard" element={<Dashboard />} />
-          <Route path="/CartPage" element={<CartPage/>} />
-          <Route path="/OrderConsole" element={<OrderConsole/>} />
-          <Route path="/OrderHistory" element={<OrderHistory/>} />
-          <Route path="/OrderHistoryPage" element={<OrderHistoryPage/>} />
-          <Route path="/OrderHistoryPages" element={<OrderHistoryPages/>} />
-          <Route path="/GenerateReport" element={<GenerateReport/>} />
-          <Route path="/SalesStatisticsPage" element={<SalesStatisticsPage/>} />
+          <Route path="/CartPage" element={<CartPage />} />
+          <Route path="/OrderConsole" element={<OrderConsole />} />
+          <Route path="/OrderHistory" element={<OrderHistory />} />
+          <Route path="/OrderHistoryPage" element={<OrderHistoryPage />} />
+          <Route path="/OrderHistoryPages" element={<OrderHistoryPages />} />
+          <Route path="/GenerateReport" element={<GenerateReport />} />
+          <Route
+            path="/SalesStatisticsPage"
+            element={<SalesStatisticsPage />}
+          />
+          <Route path="/qm-home" element={<QMHome />} />
+          <Route path="/create-batch" element={<CreateBatch />} />
+          <Route path="/update-batch/:batchID" element={<UpdateBatch />} />
+          <Route path="/view-batch" element={<ViewBatch />} />
+          <Route path="/generate-report" element={<QMGenerateReport />} />
         </Routes>
-        <Footer/>
+        <Footer />
       </UserProvider>
     </>
   );

@@ -1,33 +1,31 @@
 // app.js
 
 const express = require("express");
-const session = require('express-session');
+const session = require("express-session");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
+const productRoute = require("./routes/product.route.js");
 const mongoose = require("mongoose");
-require('dotenv').config();
+require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const mongoUrl = process.env.MONGO_URL;
 
-
-
-
 const app = express();
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 app.use(bodyParser.json());
-
 
 mongoose
   .connect(mongoUrl)
   .then(() => console.log("Database Connected"))
   .catch((err) => console.log("Database not connected", err));
 
-
-  app.use(session({
-    secret: 'secret-key',
+app.use(
+  session({
+    secret: "secret-key",
     resave: false,
-    saveUninitialized: true
-  }));
+    saveUninitialized: true,
+  })
+);
 
 app.use(express.json());
 app.use(
@@ -40,6 +38,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use("/", authRoutes);
+app.use("/api/products", productRoute);
 
 const Port = 8000;
 app.listen(Port, () => console.log(`Server is running on port ${Port}`));
