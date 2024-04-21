@@ -130,7 +130,7 @@ const GenerateReport = () => {
                 <p className="text-gray-600 mb-2">
                   Total Amount:{" "}
                   <span className="font-semibold">
-                    ${order.totalAmount.toFixed(2)}
+                    LKR {order.totalAmount.toFixed(2)}
                   </span>
                 </p>
                 <div className="mb-4">

@@ -69,7 +69,7 @@ const OrderHistoryPages = () => {
               <div className="p-6 bg-gray-100">
                 <h3 className="text-xl font-semibold mb-4">Order ID: {order._id}</h3>
                 <p className="text-gray-600 mb-2">Date: {new Date(order.createdAt).toLocaleDateString()}</p>
-                <p className="text-gray-600 mb-2">Total Amount: <span className="font-semibold">${order.totalAmount.toFixed(2)}</span></p>
+                <p className="text-gray-600 mb-2">Total Amount: <span className="font-semibold">LKR{order.totalAmount.toFixed(2)}</span></p>
               </div>
               <div className="p-6">
                 <h4 className="text-lg font-semibold mb-4">Items:</h4>
@@ -85,10 +85,10 @@ const OrderHistoryPages = () => {
                         />
                         <div>
                           <p className="text-gray-700">{item.name}</p>
-                          <p className="text-gray-500">${item.price.toFixed(2)}</p>
+                          <p className="text-gray-500">LKR{item.price.toFixed(2)}</p>
                         </div>
                       </div>
-                      <span className="font-semibold">{item.quantity} x ${item.price.toFixed(2)}</span>
+                      <span className="font-semibold">{item.quantity} x LKR{item.price.toFixed(2)}</span>
                     </li>
                   ))}
                 </ul>

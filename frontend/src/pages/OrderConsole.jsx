@@ -114,22 +114,22 @@ const OrderConsole = () => {
               {bill.items.map((item, index) => (
                 <div key={index} className="flex justify-between mb-1">
                   <span>{item.name}</span>
-                  <span>${item.total}</span>
+                  <span>LKR {item.total}</span>
                 </div>
               ))}
             </div>
             <div className="border-t pt-4 mb-4">
               <div className="flex justify-between">
                 <span className="font-semibold">Subtotal:</span>
-                <span>${(bill.totalAmount - (bill.totalAmount * 0.1)).toFixed(2)}</span>
+                <span>LKR{(bill.totalAmount - (bill.totalAmount * 0.1)).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold">Tax (10%):</span>
-                <span>${(bill.totalAmount * 0.1).toFixed(2)}</span>
+                <span>LKR{(bill.totalAmount * 0.1).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold">Total Amount:</span>
-                <span>${bill.totalAmount}</span>
+                <span>LKR{bill.totalAmount}</span>
               </div>
             </div>
             <div className="mt-6 flex justify-end space-x-4">
@@ -182,7 +182,7 @@ const OrderConsole = () => {
                   <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-lg mb-2" />
                   <div className="text-center">
                     <h3 className="text-lg font-semibold">{item.name}</h3>
-                    <p className="text-gray-600">${item.price}</p>
+                    <p className="text-gray-600">LKR {item.price}</p>
                   </div>
                 </div>
               ))}
@@ -195,7 +195,7 @@ const OrderConsole = () => {
                 <img src={item.image} alt={item.name} className="w-16 h-16 mr-4 rounded-lg shadow" />
                 <div>
                   <p className="text-lg font-semibold">{item.name}</p>
-                  <p className="text-sm text-gray-600">Price: ${item.price} | Quantity: {item.quantity} | Total: ${calculateItemTotal(item)}</p>
+                  <p className="text-sm text-gray-600">Price: LKR{item.price} | Quantity: {item.quantity} | Total: LKR{calculateItemTotal(item)}</p>
                 </div>
                 <div className="flex items-center ml-auto space-x-2">
                   <button onClick={() => removeFromSelectedItems(item._id)} className="btn btn-sm text-red-500"><FaTrashAlt /></button>
@@ -204,7 +204,7 @@ const OrderConsole = () => {
             ))}
             {selectedItems.length > 0 && (
               <div>
-                <p className="text-right mb-2">Overall Total: ${calculateOverallTotal()}</p>
+                <p className="text-right mb-2">Overall Total: LKR {calculateOverallTotal()}</p>
                 <button  
                   className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg"
                   onClick={generateBill}

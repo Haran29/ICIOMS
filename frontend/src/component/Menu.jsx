@@ -61,7 +61,7 @@ const Menu = () => {
                 />
                 <div className="text-left w-full">
                   <h3 className="text-lg font-semibold mb-1">{item.name}</h3>
-                  <p className="text-gray-600">${item.price}</p>
+                  <p className="text-gray-600">LKR{item.price}</p>
                 </div>
               </div>
             ))}

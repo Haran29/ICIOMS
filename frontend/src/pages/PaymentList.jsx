@@ -31,7 +31,7 @@ const PaymentList = () => {
               <div className="p-6 bg-gray-100">
                 <h3 className="text-xl font-semibold mb-4">Payment ID: {payment._id}</h3>
                 <p className="text-gray-600 mb-2">Date: {new Date(payment.createdAt).toLocaleDateString()}</p>
-                <p className="text-gray-600 mb-2">Amount: <span className="font-semibold">${payment.amount.toFixed(2)}</span></p>
+                <p className="text-gray-600 mb-2">Amount: <span className="font-semibold">LKR{payment.amount.toFixed(2)}</span></p>
                 <p className="text-gray-600 mb-4">Payment Method: <span className="font-semibold">{payment.Method}</span></p>
               </div>
             </div>

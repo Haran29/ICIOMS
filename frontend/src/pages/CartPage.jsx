@@ -17,7 +17,7 @@ const CartItem = ({ cartItem, updateQuantity, removeItem }) => (
     </div>
     <div className="flex items-center ml-auto space-x-2">
       <p className="text-sm text-gray-600">
-        ${cartItem.itemId.price * cartItem.quantity}
+        LKR {cartItem.itemId.price * cartItem.quantity}
       </p>
       <button
         onClick={() => updateQuantity(cartItem._id, cartItem.quantity - 1)}

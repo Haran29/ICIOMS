@@ -20,7 +20,7 @@ const CartItem = ({ cartItem, updateQuantity, removeItem }) => (
     </div>
     <div className="flex items-center ml-auto space-x-2">
       <p className="text-sm text-gray-600">
-        ${cartItem.itemId.price * cartItem.quantity}
+        LKR {cartItem.itemId.price * cartItem.quantity}
       </p>
       <button
         onClick={() => updateQuantity(cartItem._id, cartItem.quantity - 1)}
@@ -435,7 +435,7 @@ const createOrder = async () => {
             </div>
             <div className="mt-4 text-right">
               <p className="text-xl font-semibold">
-                Overall Total: ${calculateOverallTotal()}
+                Overall Total: LKR {calculateOverallTotal()}
               </p>
             </div>
           </div>

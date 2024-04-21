@@ -123,7 +123,7 @@ const OrderOnline = () => {
               <div className="flex justify-between items-center mt-4">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
-                  <p className="text-gray-600">${item.price}</p>
+                  <p className="text-gray-600">LKR{item.price}</p>
                 </div>
                 {item.quantity > 0 ? (
                   <div className="flex items-center">

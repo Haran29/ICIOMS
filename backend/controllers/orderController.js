@@ -1,6 +1,8 @@
 // Import the Order model
 const Order = require("../models/Order");
 const OfflineOrder = require("../models/offlineOrder")
+const nodemailer = require('nodemailer');
+const User = require("../models/user");
 // Handle order creation
 /*const handleOrder = async (req, res) => {
   try {
@@ -46,7 +48,7 @@ const OfflineOrder = require("../models/offlineOrder")
 };*/
 
 
-const handleOrder = async (req, res) => {
+/*const handleOrder = async (req, res) => {
   try {
     const {
       userId,
@@ -88,6 +90,76 @@ const handleOrder = async (req, res) => {
     res
       .status(500)
       .json({ message: "Failed to create order", error: error.message });
+  }
+};*/
+
+const transporter = nodemailer.createTransport({
+  // Your email configuration
+  service: 'gmail',
+  auth: {
+    user: 'viji69024@gmail.com',
+    pass: 'rjqj wwgz eyac yvia',
+  },
+});
+
+const handleOrder = async (req, res) => {
+  try {
+    const {
+      userId,
+      phoneNumber,
+      postalCode,
+      city,
+      streetAddress,
+      items,
+      totalAmount,
+      status,
+    } = req.body;
+
+    const orderItems = items.map(item => ({
+      itemId: item.itemId,
+      quantity: item.quantity,
+      price: item.price,
+      name: item.name,
+      imageUrl: item.imageUrl,
+    }));
+
+    const newOrder = new Order({
+      userId,
+      phoneNumber,
+      postalCode,
+      city,
+      streetAddress,
+      items: orderItems,
+      totalAmount,
+      status,
+    });
+
+    const savedOrder = await newOrder.save();
+
+    // Find the user email using userId from UserModel
+    const user = await User.findById(userId);
+    const userEmail = user.email;
+
+    // Send email to the customer
+    const mailOptions = {
+      from: 'yourEmail@gmail.com',
+      to: userEmail,
+      subject: 'Order Confirmation',
+      text: `Thank you for your order! Your order ID is ${savedOrder._id}.`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending email:', error);
+      } else {
+        console.log('Email sent:', info.response);
+      }
+    });
+
+    res.status(201).json({ orderId: savedOrder._id });
+  } catch (error) {
+    console.error('Error creating order:', error);
+    res.status(500).json({ message: 'Failed to create order', error: error.message });
   }
 };
 
