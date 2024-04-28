@@ -24,18 +24,35 @@ const LoginPage = () => {
       } else {
         toast.success("Successfully Logged in");
         setData({ email: "", password: "" });
-        Navigate("/Dashboard");
+       
+        const user = response.data;
+       
+        sessionStorage.setItem('user', JSON.stringify(user));
+        sessionStorage.setItem('role', user.role); 
+
+        if (user.role === 'admin') {
+          Navigate("/admin-dashboard");
+        } else if (user.role === 'user') {
+          Navigate("/");
+        } else if (user.role === "salesperson") {
+          Navigate("/OrderConsole");
+        } else if (user.role === "salesperson_manager") {
+          Navigate("/OrderConsole");
+        }else {
+          Navigate("/");
+        }
       }
     } catch (error) {
       console.log(error);
     }
   };
+  
 
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden ">
-      {/* Content Section - Photo */}
+     
       <div className="flex-1 bg-emerald-500 flex items-center justify-center relative">
-        {/* Your photo or image here */}
+       
         <img
           src={YourImage}
           alt="Your Photo"
@@ -43,11 +60,10 @@ const LoginPage = () => {
           className="rounded-lg absolute bottom-0 left-0 "
         />
       </div>
-      {/* Content Section - Login Form */}
+     
       <div className="flex-1 bg-white flex items-center justify-center">
         <div className="max-w-sm">
-          <h2 className="text-2xl font-semibold mb-6">Sign In</h2> {/* "Sign In" label */}
-          {/* Login Form */}
+          <h2 className="text-2xl font-semibold mb-6">Sign In</h2> 
           <form action="" onSubmit={LoginUser}>
             <label htmlFor="Email" className="block mb-2">
               Email

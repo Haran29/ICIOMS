@@ -1,8 +1,9 @@
 import React from 'react'
+import AdminPage from '../component/AdminAddItem'
 
 const AboutUs = () => {
   return (
-    <div>AboutUs</div>
+  <AdminPage></AdminPage>
   )
 }
 

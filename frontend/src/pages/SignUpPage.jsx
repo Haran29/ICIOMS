@@ -53,6 +53,7 @@ const SignUpPage = () => {
               value={data.name}
               onChange={(e) => setData({ ...data, name: e.target.value })}
               className="w-full pb-1 mb-4 border-b border-gray-300 focus:outline-none"
+              required
             />
 
             <label htmlFor="Email" className="block mb-2">
@@ -77,6 +78,7 @@ const SignUpPage = () => {
               value={data.contact}
               onChange={(e) => setData({ ...data, contact: e.target.value })}
               className="w-full pb-1 mb-4 border-b border-gray-300 focus:outline-none"
+              required
             />
 
             <label htmlFor="Password" className="block mb-2">
@@ -89,6 +91,8 @@ const SignUpPage = () => {
               value={data.password}
               onChange={(e) => setData({ ...data, password: e.target.value })}
               className="w-full pb-1 mb-4 border-b border-gray-300 focus:outline-none"
+              required
+              
             />
 
             <button
