@@ -1,88 +1,106 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const ManageOrdersPage = () => {
-  const [orders, setOrders] = useState([]);
+  const [onlineOrders, setOnlineOrders] = useState([]);
+  const [offlineOrders, setOfflineOrders] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [editOrderData, setEditOrderData] = useState(null);
-  const [editedItems, setEditedItems] = useState([]);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [orderIdToDelete, setOrderIdToDelete] = useState(null);
+  const [showOfflineOrders, setShowOfflineOrders] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
 
   useEffect(() => {
-    fetchOrderHistory();
+    fetchOnlineOrders();
+    fetchOfflineOrders();
   }, []);
 
-  const fetchOrderHistory = async () => {
+  const fetchOnlineOrders = async () => {
     try {
       const response = await axios.get("/orders");
       const sortedOrders = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      setOrders(sortedOrders);
+      setOnlineOrders(sortedOrders);
     } catch (error) {
-      console.error("Failed to fetch order history:", error);
+      console.error("Failed to fetch online orders:", error);
+    }
+  };
+
+  const fetchOfflineOrders = async () => {
+    try {
+      const response = await axios.get("/offline-orders");
+      setOfflineOrders(response.data);
+    } catch (error) {
+      console.error("Failed to fetch offline orders:", error);
     }
   };
 
   const updateOrderStatus = async (orderId, newStatus) => {
+    const ordersToUpdate = showOfflineOrders ? offlineOrders : onlineOrders;
     try {
-      await axios.put(`/orders/${orderId}`, { status: newStatus });
-      fetchOrderHistory();
+      if (showOfflineOrders) {
+        setOfflineOrders(ordersToUpdate.map(order => order._id === orderId ? {...order, status: newStatus} : order));
+        await axios.put(`offline-orders/${orderId}`, { status: newStatus });
+      } else {
+        setOnlineOrders(ordersToUpdate.map(order => order._id === orderId ? {...order, status: newStatus} : order));
+        await axios.put(`/orders/${orderId}`, { status: newStatus });
+      }
     } catch (error) {
       console.error("Failed to update order status:", error);
     }
   };
 
   const deleteOrder = async (orderId) => {
+    const ordersToDeleteFrom = showOfflineOrders ? offlineOrders : onlineOrders;
     try {
-      await axios.delete(`/orders/${orderId}`);
-      fetchOrderHistory();
+      if (showOfflineOrders) {
+        setOfflineOrders(ordersToDeleteFrom.filter(order => order._id !== orderId));
+        await axios.delete(`/offline-orders/${orderId}`);
+      } else {
+        setOnlineOrders(ordersToDeleteFrom.filter(order => order._id !== orderId));
+        await axios.delete(`/orders/${orderId}`);
+      }
+      setSuccessMessage("Order deleted successfully!"); // Set success message
     } catch (error) {
       console.error("Failed to delete order:", error.response ? error.response.data : error);
     }
   };
 
-  const editOrder = async (orderId, updatedData) => {
-    try {
-      await axios.put(`/orders/${orderId}`, updatedData);
-      fetchOrderHistory();
-      setEditOrderData(null); // Close edit form after successful update
-    } catch (error) {
-      console.error("Failed to update order:", error);
+  const confirmDelete = (orderId) => {
+    setOrderIdToDelete(orderId);
+    setShowConfirmation(true);
+  };
+
+  const handleDeleteConfirmed = () => {
+    if (orderIdToDelete) {
+      deleteOrder(orderIdToDelete);
+      setOrderIdToDelete(null);
     }
+    setShowConfirmation(false);
   };
 
-  const updateEditedItem = (itemId, newData) => {
-    const updatedItems = editedItems.map(item => 
-      item.itemId === itemId ? { ...item, ...newData } : item
-    );
-    setEditedItems(updatedItems);
+  const handleDeleteCancelled = () => {
+    setOrderIdToDelete(null);
+    setShowConfirmation(false);
   };
 
-  const deleteEditedItem = (itemId) => {
-    const updatedItems = editedItems.filter(item => item.itemId !== itemId);
-    setEditedItems(updatedItems);
-  };
+  const ordersToShow = showOfflineOrders ? offlineOrders : onlineOrders;
 
-  const filteredOrders = orders.filter(order => 
-    order._id.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    (!startDate || new Date(order.createdAt) >= new Date(startDate)) &&
-    (!endDate || new Date(order.createdAt) <= new Date(endDate))
-  );
+  // Render a toast notification when success message is set
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage);
+    }
+  }, [successMessage]);
 
-  const openEditForm = (order) => {
-    setEditOrderData(order);
-    setEditedItems(order.items);
-  };
-
-  const closeEditForm = () => {
-    setEditOrderData(null);
-    setEditedItems([]);
-  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <ToastContainer />
       <div className="max-w-4xl w-full p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-3xl font-semibold mb-8 text-center">Manage Orders</h2>
+        <h2 className="text-3xl font-semibold mb-8 text-center">Order History</h2>
 
         <div className="mb-6">
           <input
@@ -111,13 +129,28 @@ const ManageOrdersPage = () => {
           />
         </div>
 
+        <div className="mb-6 flex justify-between">
+          <button 
+            onClick={() => setShowOfflineOrders(false)} 
+            className={`px-4 py-2 ${!showOfflineOrders ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'} rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700`}
+          >
+            Online Orders
+          </button>
+          <button 
+            onClick={() => setShowOfflineOrders(true)} 
+            className={`px-4 py-2 ${showOfflineOrders ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'} rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700`}
+          >
+            Offline Orders
+          </button>
+        </div>
+
         <div className="space-y-8">
-          {filteredOrders.map((order) => (
+          {ordersToShow.map((order) => (
             <div key={order._id} className="border rounded-lg overflow-hidden shadow-md">
               <div className="p-6 bg-gray-100">
                 <h3 className="text-xl font-semibold mb-4">Order ID: {order._id}</h3>
                 <p className="text-gray-600 mb-2">Date: {new Date(order.createdAt).toLocaleDateString()}</p>
-                <p className="text-gray-600 mb-2">Total Amount: <span className="font-semibold">${order.totalAmount.toFixed(2)}</span></p>
+                <p className="text-gray-600 mb-2">Total Amount: <span className="font-semibold">LKR {order.totalAmount.toFixed(2)}</span></p>
                 <div className="mb-4">
                   <label className="text-gray-600">Status:</label>
                   <select 
@@ -130,10 +163,8 @@ const ManageOrdersPage = () => {
                     <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
-                <button onClick={() => openEditForm(order)} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700 text-lg mr-4">Edit Order</button>
-                <button onClick={() => deleteOrder(order._id)} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700 text-lg ">Delete Order</button>
+                <button onClick={() => confirmDelete(order._id)} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700 text-lg">Delete Order</button>
               </div>
-              
               <div className="p-6">
                 <h4 className="text-lg font-semibold mb-4">Items:</h4>
                 <ul className="space-y-4">
@@ -148,18 +179,10 @@ const ManageOrdersPage = () => {
                         />
                         <div>
                           <p className="text-gray-700">{item.name}</p>
-                          <p className="text-gray-500">${item.price.toFixed(2)}</p>
+                          <p className="text-gray-500">LKR{item.price.toFixed(2)}</p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <input
-                          type="number"
-                          defaultValue={item.quantity}
-                          onChange={(e) => updateEditedItem(item.itemId, { quantity: parseInt(e.target.value, 10) })}
-                          className="border p-2 rounded-md w-16 text-center"
-                        />
-                        <button onClick={() => deleteEditedItem(item.itemId)} className="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700">Delete</button>
-                      </div>
+                      <span className="font-semibold">{item.quantity} x LKR {item.price.toFixed(2)}</span>
                     </li>
                   ))}
                 </ul>
@@ -168,88 +191,14 @@ const ManageOrdersPage = () => {
           ))}
         </div>
 
-        {/* Edit Order Form/Modal */}
-        {editOrderData && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-8 rounded-lg shadow-lg">
-              <h2 className="text-2xl font-semibold mb-4">Edit Order</h2>
-
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                // Extract form data and pass to editOrder
-                editOrder(editOrderData._id, {
-                  status: e.target.status.value,
-                  totalAmount: parseFloat(e.target.totalAmount.value),
-                  items: editedItems,
-                });
-              }}>
-                <div className="mb-4">
-                  <label className="text-gray-600 mr-2">Status:</label>
-                  <select name="status" defaultValue={editOrderData.status}>
-                    <option value="pending">Pending</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                </div>
-
-                <div className="mb-4">
-                  <label className="text-gray-600 mr-2">Total Amount:</label>
-                  <input 
-                    type="number" 
-                    name="totalAmount" 
-                    step="0.01" 
-                    defaultValue={editOrderData.totalAmount.toFixed(2)}
-                    className="border p-2 rounded-md"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="text-gray-600 mr-2">Date:</label>
-                  <input 
-                    type="text" 
-                    name="createdAt" 
-                    readOnly
-                    value={new Date(editOrderData.createdAt).toLocaleDateString()}
-                    className="border p-2 rounded-md"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <h4 className="text-lg font-semibold mb-2">Edit Items:</h4>
-                  <ul className="space-y-4">
-                    {editedItems.map((item) => (
-                      <li key={item.itemId} className="flex justify-between items-center">
-                        <div className="flex items-center space-x-4">
-                          <img 
-                            src={item.imageUrl || 'https://via.placeholder.com/64x64'}
-                            alt={item.name} 
-                            className="w-16 h-16 object-cover rounded-lg" 
-                            onError={(e) => { e.target.onerror = null; e.target.src='https://via.placeholder.com/64x64' }}
-                          />
-                          <div>
-                            <p className="text-gray-700">{item.name}</p>
-                            <p className="text-gray-500">${item.price.toFixed(2)}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                          <input
-                            type="number"
-                            defaultValue={item.quantity}
-                            onChange={(e) => updateEditedItem(item.itemId, { quantity: parseInt(e.target.value, 10) })}
-                            className="border p-2 rounded-md w-16 text-center"
-                          />
-                          <button onClick={() => deleteEditedItem(item.itemId)} className="px-2 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700">Delete</button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="flex justify-end">
-                  <button type="button" onClick={closeEditForm} className="px-4 py-2 bg-red-600 text-white rounded-md mr-2">Cancel</button>
-                  <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md">Save Changes</button>
-                </div>
-              </form>
+        {showConfirmation && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75">
+            <div className="bg-white p-8 rounded-lg">
+              <p className="text-lg mb-4">Are you sure you want to delete this order?</p>
+              <div className="flex justify-between">
+                <button onClick={handleDeleteConfirmed} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700 mr-2">Yes</button>
+                <button onClick={handleDeleteCancelled} className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700 ml-2">No</button>
+              </div>
             </div>
           </div>
         )}

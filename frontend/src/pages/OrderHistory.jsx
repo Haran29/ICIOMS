@@ -9,7 +9,7 @@ const OrderHistoryPage = () => {
   useEffect(() => {
     fetchOrderHistory();
   }, []);
-
+//fetch order history function
   const fetchOrderHistory = async () => {
     try {
       const user = JSON.parse(sessionStorage.getItem("user"));
@@ -23,14 +23,17 @@ const OrderHistoryPage = () => {
     }
   };
 
+  // function for handleSearchTermChange
   const handleSearchTermChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
+  // function for handleSearchCriteriaChange
   const handleSearchCriteriaChange = (event) => {
     setSearchCriteria(event.target.value);
   };
 
+  // function  filterOrders
   const filterOrders = (order) => {
     switch (searchCriteria) {
       case "orderId":
@@ -78,9 +81,10 @@ const OrderHistoryPage = () => {
         
         {/* Order List */}
         <div className="space-y-8">
-          {orders
-            .filter(filterOrders)
-            .map((order) => (
+          {orders.length === 0 ? (
+            <p>No order history available.</p>
+          ) : (
+            orders.filter(filterOrders).map((order) => (
               <div key={order._id} className="border rounded-lg overflow-hidden shadow-md">
                 <div className="p-6 bg-gray-100">
                   <h3 className="text-xl font-semibold mb-4">Order ID: {order._id}</h3>
@@ -95,7 +99,7 @@ const OrderHistoryPage = () => {
                       <li key={item.itemId} className="flex justify-between items-center">
                         <div className="flex items-center space-x-4">
                           <img 
-                            src={item.imageUrl || 'https://via.placeholder.com/64x64'}  // Fallback to placeholder image
+                            src={item.imageUrl || 'https://via.placeholder.com/64x64'}  
                             alt={item.name} 
                             className="w-16 h-16 object-cover rounded-lg" 
                             onError={(e) => { e.target.onerror = null; e.target.src='https://via.placeholder.com/64x64' }}  // Fallback on image load error
@@ -111,7 +115,8 @@ const OrderHistoryPage = () => {
                   </ul>
                 </div>
               </div>
-            ))}
+            ))
+          )}
         </div>
       </div>
     </div>

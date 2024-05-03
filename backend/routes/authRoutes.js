@@ -17,6 +17,9 @@ const {
   deleteOrder,
   updateOrder,
   saveOfflineOrder,
+  getofflineorder,
+  deleteOfflineOrder,
+  updateOfflineOrder
 } = require("../controllers/orderController");
 
 const {
@@ -35,15 +38,20 @@ const {
   removefromcart,
   getcartitemsfororderpage,
   clearCart,
+  getUserCart,
+  removeItemFromDataBase
 } = require("../controllers/cartController");
 
 const {
   test,
-  registerUser,
   LoginUser,
   getProfile,
   logout,
 } = require("../controllers/authController");
+
+const {
+  registerUser
+} = require("../controllers/testController")
 
 router.get("/", test);
 router.post("/SignUpPage", registerUser);
@@ -72,6 +80,7 @@ router.delete("/cart/clear/:userId", clearCart);
 
 router.post("/remove-from-cart", removefromcart);
 router.get("/getcartitemsfororderpage/:userId", getcartitemsfororderpage);
+router.get('/cart/user/:userId', getUserCart);
 router.get("/test", () => console.log("Testing2"));
 router.post("/orders/create", handleOrder);
 router.get("/orders/user/:userId", getOrder);
@@ -80,6 +89,12 @@ router.put("/orders/:orderId", updateStatus);
 //router.put('/orders/:orderId',updateOrder);
 router.delete("/orders/:orderId", deleteOrder);
 router.post("/save-offline-order", saveOfflineOrder);
+router.get("/offline-orders",getofflineorder)
+router.delete("/offline-orders/:orderId",deleteOfflineOrder);
+router.put("/offline-orders/:orderId",updateOfflineOrder);
+
+router.delete('/cart/:userId/item/:itemId',removeItemFromDataBase);
+
 
 //payment
 router.post("/payments/create", savePayment);

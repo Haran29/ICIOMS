@@ -9,6 +9,7 @@ const GenerateReport = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [orderStatus, setOrderStatus] = useState("");
   const componentRef = useRef(null);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ const GenerateReport = () => {
 
   useEffect(() => {
     filterOrders();
-  }, [orders, searchQuery, startDate, endDate]);
+  }, [orders, searchQuery, startDate, endDate, orderStatus]);
 
   const fetchOrderHistory = async () => {
     try {
@@ -33,7 +34,8 @@ const GenerateReport = () => {
       (order) =>
         order._id.toLowerCase().includes(searchQuery.toLowerCase()) &&
         (!startDate || new Date(order.createdAt) >= new Date(startDate)) &&
-        (!endDate || new Date(order.createdAt) <= new Date(endDate))
+        (!endDate || new Date(order.createdAt) <= new Date(endDate)) &&
+        (!orderStatus || order.status.toLowerCase() === orderStatus.toLowerCase())
     );
     setFilteredOrders(filtered);
   };
@@ -97,6 +99,22 @@ const GenerateReport = () => {
               className="border p-2 rounded-md"
             />
           </div>
+        </div>
+
+        {/* Order Status Filter */}
+        <div className="mb-4">
+          <label className="text-gray-600 mr-2">Order Status:</label>
+          <select
+            value={orderStatus}
+            onChange={(e) => setOrderStatus(e.target.value)}
+            className="border p-2 rounded-md"
+          >
+            <option value="">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+            
+          </select>
         </div>
 
         <div className="mb-4">

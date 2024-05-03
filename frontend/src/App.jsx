@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUp";
 import OrderOnlinePage from "./pages/OrderOnlinePage";
+import OrderOnline from "./pages/OrderOnline"
 import OurMenu from "./pages/OurMenu";
 import AboutUs from "./pages/AboutUs";
 import ContactUS from "./pages/ContactUS";
@@ -27,12 +28,16 @@ import ManageProfile from "./pages/ManageProfile";
 import UserReport from "./pages/UserReport";
 import Adduser from "./pages/Adduser"
 import Admindash from "./pages/Admindash";
-
+import ResetPassword from "./pages/ResetPassword";
 import CreateBatch from "./pages/CreateBatch";
 import UpdateBatch from "./pages/UpdateBatch";
 import ViewBatch from "./pages/ViewBatch";
 import QMGenerateReport from "./pages/QMGenerateReport";
 import QMHome from "./pages/QMHome";
+import AddProductPage from "./pages/AddProductPage"
+import AllProductsPage from "./pages/AllProductPage"
+import ManageProductPage from "./pages/ManageProductPage"
+import  EditProductPage from "./pages/EditProductPage"
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -43,11 +48,13 @@ const App = () => {
       <UserProvider>
         <DynamicNavBar />
         <Toaster position="top-center" reverseOrder={false} />
+
         <Routes>
           <Route path="/" element={<OurMenu />} />
           <Route path="/LoginPage" element={<LoginPage />} />
           <Route path="/SignUpPage" element={<SignUpPage />} />
           <Route path="/OrderOnlinePage" element={<OrderOnlinePage />} />
+          <Route path="/OrderOnline" element={<OrderOnline />} />
           <Route path="/OurMenu" element={<OurMenu />} />
           <Route path="/AboutUs" element={<AboutUs />} />
           <Route path="/ContactUS" element={<ContactUS />} />
@@ -70,14 +77,21 @@ const App = () => {
           <Route path="/Admindash" element={<Admindash/>} />
           <Route path="/ManageProfile" element={<ManageProfile/>} />
           <Route path="/UserReport" element={<UserReport/>} />
+          <Route path="/ResetPassword" element={<ResetPassword />} />
 
           <Route path="/qm-home" element={<QMHome />} />
           <Route path="/create-batch" element={<CreateBatch />} />
           <Route path="/update-batch/:batchID" element={<UpdateBatch />} />
           <Route path="/view-batch" element={<ViewBatch />} />
           <Route path="/generate-report" element={<QMGenerateReport />} />
+          <Route path="/AddProductPage" element={<AddProductPage />} />
+          <Route path="/AllProductsPage" element={<AllProductsPage />} />
+          <Route path="/ManageProductPage" element={<ManageProductPage />} />
+          <Route path="/update-item/:productId" component={EditProductPage} />
+
 
         </Routes>
+       
         <Footer />
       </UserProvider>
     </>

@@ -1,5 +1,5 @@
 // controllers/testController.js
-const jwt = require("jsonwebtoken");
+/*const jwt = require("jsonwebtoken");
 const { response } = require("express");
 const User = require("../models/user");
 require("dotenv").config();
@@ -9,15 +9,39 @@ const secretKey = process.env.SECRET_KEY;
 const crypto = require("crypto");
 const bodyParser = require("body-parser");
 //const Pass = require("../models/Pass");
-//const otpGenerator = require("otp-generator");
+//const otpGenerator = require("otp-generator");*/
+
+
+// controllers/testController.js
+const jwt = require("jsonwebtoken");
+const { response } = require("express");
+const User = require("../models/user");
+require("dotenv").config();
+const { hashPassword, comparePassword } = require("../helpers/auth");
+const secretKey = process.env.SECRET_KEY;
+const crypto = require("crypto");
+const bodyParser = require("body-parser");
+const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
+
 
 const test = (req, res) => {
   res.json("Test is Working");
 };
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'ssavindi660@gmail.com',
+    pass: 'jeux mumt hcss dygs',
+  },
+});
+
+
 const registerUser = async (req, res) => {
   try {
     const { name, email, password, contact } = req.body;
+    console.log(password)
     if (!name) {
       return res.json({
         error: "name is required",
@@ -45,9 +69,33 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    return res.json(user);
+    await sendRegistrationEmail(user);
+
+    return res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
-    console.log(error);
+    console.error('Error registering user:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Function to send registration email
+const sendRegistrationEmail = async (user) => {
+  try {
+    const mailOptions = {
+      from: 'your_email@gmail.com',
+      to: user.email,
+      subject: 'Registration Successful',
+      html: `
+        <p>Dear ${user.name},</p>
+        <p>Thank you for registering with us!</p>
+        <p>Welcome to our platform.</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Registration email sent successfully');
+  } catch (error) {
+    console.error('Error sending registration email:', error);
   }
 };
 
@@ -298,6 +346,31 @@ const logout = (req, res) => {
   res.json({ message: "Logout successful" });
 };
 
+
+const resetpassword = async (req, res)=> {
+  const { email, password } = req.body;
+
+try {
+  // Find the user by email
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found.' });
+  }
+
+  //const hashedPassword = await hashPassword(newPassword);
+  // Update the user's password
+  const hashedPassword = await hashPassword(password);
+  user.password = hashedPassword;
+  await user.save();
+
+  return res.json({ message: 'Password reset successfully' });
+} catch (error) {
+  console.error('Failed to reset password:', error);
+  return res.status(500).json({ message: 'An error occurred while resetting the password.' });
+    }
+  };
+
 module.exports = {
   test,
   registerUser,
@@ -311,4 +384,5 @@ module.exports = {
   fetchuser,
   adduser,
   updaterole,
+  resetpassword
 };

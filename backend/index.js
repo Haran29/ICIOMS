@@ -6,6 +6,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const UserRoutes = require("./routes/UserRoutes");
 const productRoute = require("./routes/product.route.js");
+const itemRoutes  =  require("./routes/itemRoutes.js");
 const mongoose = require("mongoose");
 require('dotenv').config();
 const cookieParser = require("cookie-parser");
@@ -43,6 +44,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use("/", authRoutes);
 app.use("/Savindi", UserRoutes);
+app.use("/Shakya", itemRoutes);
 app.use("/api/products", productRoute);
 
 

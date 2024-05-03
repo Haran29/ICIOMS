@@ -1,143 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaTrashAlt } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import "react-toastify/dist/ReactToastify.css";
 import CartItem from "../component/CartItem";
-//import CreditCardForm from "../component/CreditCardForm"
+import CreditCardForm from "../component/CreditCardForm";
 
-
-/*const CartItem = ({ cartItem, updateQuantity, removeItem }) => (
-  <div key={cartItem._id} className="flex items-center mb-6 border-b pb-4">
-    <img
-      src={cartItem.itemId.image}
-      alt={cartItem.itemId.name}
-      className="w-16 h-16 mr-4 rounded"
-    />
-    <div>
-      <p className="text-lg font-semibold">{cartItem.itemId.name}</p>
-      <p className="text-sm text-gray-600">Qty: {cartItem.quantity}</p>
-    </div>
-    <div className="flex items-center ml-auto space-x-2">
-      <p className="text-sm text-gray-600">
-        LKR {cartItem.itemId.price * cartItem.quantity}
-      </p>
-      <button
-        onClick={() => updateQuantity(cartItem._id, cartItem.quantity - 1)}
-        className="btn btn-sm btn-blue"
-      >
-        -
-      </button>
-      <button
-        onClick={() => updateQuantity(cartItem._id, cartItem.quantity + 1)}
-        className="btn btn-sm btn-blue"
-      >
-        +
-      </button>
-      <button
-        onClick={() => removeItem(cartItem._id)}
-        className="btn btn-sm btn-red"
-      >
-        <FaTrashAlt />
-      </button>
-    </div>
-  </div>
-);*/
-
-const CreditCardForm = ({ onClose,createOrder }) => {
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [cvv, setCvv] = useState("");
-
-  const isCardNumberValid = (cardNumber) => {
-    return /^[0-9]{16}$/.test(cardNumber);
-  };
-
-  const isExpiryDateValid = (expiryDate) => {
-    return /^[0-9]{2}\/[0-9]{2}$/.test(expiryDate);
-  };
-
-  const isCVVValid = (cvv) => {
-    return /^[0-9]{3,4}$/.test(cvv);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!isCardNumberValid(cardNumber) || !isExpiryDateValid(expiryDate) || !isCVVValid(cvv)) {
-      toast.error("Invalid credit card details.", { position: "top-right" });
-      return;
-    }
-
-    try {
-      const paymentResponse = await axios.post("/simulate-payment");
-
-      if (paymentResponse.status === 200) {
-        createOrder();
-        onClose();
-        toast.success("Payment successful!", { position: "top-right" });
-      } else {
-        console.error("Payment failed");
-        toast.error("Payment failed. Please try again.", { position: "top-right" });
-      }
-    } catch (error) {
-      console.error("Error during payment:", error);
-      toast.error("Error during payment. Please try again.", { position: "top-right" });
-    }
-  };
-
-  return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-8 rounded-lg w-96">
-        <h2 className="text-xl font-semibold mb-4">Enter Credit Card Details</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="cardNumber" className="block text-sm font-bold mb-2">Card Number</label>
-            <input
-              type="text"
-              id="cardNumber"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
-              className="input"
-              placeholder="Card Number"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="expiryDate" className="block text-sm font-bold mb-2">Expiry Date</label>
-            <input
-              type="text"
-              id="expiryDate"
-              value={expiryDate}
-              onChange={(e) => setExpiryDate(e.target.value)}
-              className="input"
-              placeholder="MM/YY"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="cvv" className="block text-sm font-bold mb-2">CVV</label>
-            <input
-              type="text"
-              id="cvv"
-              value={cvv}
-              onChange={(e) => setCvv(e.target.value)}
-              className="input"
-              placeholder="CVV"
-              required
-            />
-          </div>
-          <div className="flex justify-end">
-            <button type="submit" className="btn btn-blue">Pay</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-
-const CartPage = () => {
+const CartPages = () => {
   const [cartItems, setCartItems] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [postalCode, setPostalCode] = useState("");
@@ -145,11 +14,13 @@ const CartPage = () => {
   const [streetAddress, setStreetAddress] = useState("");
   const [showCreditCardForm, setShowCreditCardForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   useEffect(() => {
     fetchCartItems();
   }, []);
 
+  //sennding request to fetchCartItems 
   const fetchCartItems = async () => {
     setIsLoading(true);
     try {
@@ -160,39 +31,33 @@ const CartPage = () => {
       }
     } catch (error) {
       console.error("Failed to fetch cart items:", error);
-      toast.error("Failed to fetch cart items. Please try again.", { position: "top-right" });
+      toast.error("Failed to fetch cart items. Please try again.", {
+        position: "top-right",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  /*const updateQuantity = async (cartItemId, newQuantity) => {
-    try {
-      if (newQuantity < 0) {
-        toast.error("Quantity cannot be negative.", { position: "top-right" });
-        return;
-      }
-      const response = await axios.put("/cart/updateQuantity", {
-        cartItemId,
-        quantity: newQuantity,
-      });
-      fetchCartItems();
-      toast.success("Quantity updated successfully!", { position: "top-right" });
-    } catch (error) {
-      console.error("Error updating quantity:", error);
-      toast.error(error.response?.data?.message || "Failed to update quantity. Please try again.", {
-        position: "top-right",
-      });
-    }
-  };*/
+  // updateQuanity 
   const updateQuantity = async (cartItemId, newQuantity) => {
     try {
-      const availableQuantityResponse = await axios.get(`/items/${cartItems.find(item => item._id === cartItemId).itemId._id}/availableQuantity`);
+      //retriving avaible qty
+      const availableQuantityResponse = await axios.get(
+        `/items/${
+          cartItems.find((item) => item._id === cartItemId).itemId._id
+        }/availableQuantity`
+      );
 
       const availableQuantity = availableQuantityResponse.data.quantity;
-
+      //chking if item is available
       if (newQuantity > availableQuantity) {
-        toast.error(`Only ${availableQuantity} ${cartItems.find(item => item._id === cartItemId).itemId.name} available.`, { position: "top-right" });
+        toast.error(
+          `Only ${availableQuantity} ${
+            cartItems.find((item) => item._id === cartItemId).itemId.name
+          } available.`,
+          { position: "top-right" }
+        );
         return;
       }
 
@@ -200,23 +65,32 @@ const CartPage = () => {
         toast.error("Quantity cannot be negative.", { position: "top-right" });
         return;
       }
-
+      //updating qty
       const response = await axios.put("/cart/updateQuantity", {
         cartItemId,
         quantity: newQuantity,
       });
 
       fetchCartItems();
-      toast.success("Quantity updated successfully!", { position: "top-right" });
-    } catch (error) {
-      console.error("Error updating quantity:", error);
-      toast.error(error.response?.data?.message || "Failed to update quantity. Please try again.", {
+      toast.success("Quantity updated successfully!", {
         position: "top-right",
       });
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to update quantity. Please try again.",
+        {
+          position: "top-right",
+        }
+      );
     }
   };
+
+  //remving a item in cart
   const removeItem = async (cartItemId) => {
     try {
+      //sending requst to removing a item
       const response = await axios.delete("/cart/deleteItem", {
         data: { cartItemId },
       });
@@ -224,12 +98,17 @@ const CartPage = () => {
       toast.success("Item removed successfully!", { position: "top-right" });
     } catch (error) {
       console.error("Error removing item from cart:", error);
-      toast.error(error.response?.data?.message || "Failed to remove item from cart. Please try again.", {
-        position: "top-right",
-      });
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to remove item from cart. Please try again.",
+        {
+          position: "top-right",
+        }
+      );
     }
   };
 
+  //clear cart function
   const clearCart = async () => {
     try {
       const user = JSON.parse(sessionStorage.getItem("user"));
@@ -237,8 +116,13 @@ const CartPage = () => {
       fetchCartItems();
     } catch (error) {
       console.error("Error clearing cart:", error);
+      toast.error("Failed to clear cart. Please try again.", {
+        position: "top-right",
+      });
     }
   };
+
+  // calculate overroll total
   const calculateOverallTotal = () => {
     let total = 0;
     cartItems.forEach((cartItem) => {
@@ -247,15 +131,38 @@ const CartPage = () => {
     return total.toFixed(2);
   };
 
+  // handlepayment function
   const handlePayment = () => {
-    if (!phoneNumber || !postalCode || !city || !streetAddress) {
-      toast.error("All fields are required.", { position: "top-right" });
+    // Frontend validation
+    if (!validateForm()) {
       return;
     }
     setShowCreditCardForm(true);
   };
 
-  /*const createOrder = async () => {
+  const validateForm = () => {
+    if (!phoneNumber || !postalCode || !city || !streetAddress) {
+      toast.error("All fields are required.", { position: "top-right" });
+      return false;
+    }
+
+    if (!/^(07)\d{8}$/.test(phoneNumber)) {
+      toast.error("Phone number must be 10 digits and start with '07'.", {
+        position: "top-right",
+      });
+      return false;
+    }
+
+    if (!/^[0-9]{5}$/.test(postalCode)) {
+      toast.error("Postal code must be 5 digits.", { position: "top-right" });
+      return false;
+    }
+
+    return true;
+  };
+
+  //order creation function
+  const createOrder = async () => {
     try {
       const user = JSON.parse(sessionStorage.getItem("user"));
 
@@ -279,80 +186,108 @@ const CartPage = () => {
       const response = await axios.post("/orders/create", orderDetails);
 
       if (response.status === 201) {
-        clearCart();
-        toast.success("Order created successfully!", { position: "top-right" });
+        // Generate a payment ID
+        const paymentId = uuidv4();
+
+        console.log(response);
+
+        // Save payment details in payment table
+        const paymentDetails = {
+          paymentId,
+          userId: user._id,
+          orderId: response.data.orderId,
+          status: "completed",
+          Method: "Card",
+          amount: calculateOverallTotal(),
+        };
+
+        const paymentResponse = await axios.post(
+          "/payments/create",
+          paymentDetails
+        );
+
+        if (paymentResponse.status === 201) {
+          clearCart();
+          toast.success(
+            "Order created successfully and payment details saved!",
+            { position: "top-right" }
+          );
+        } else {
+          console.error("Failed to save payment details");
+          toast.error("Failed to save payment details. Please try again.", {
+            position: "top-right",
+          });
+        }
       } else {
         console.error("Failed to create order");
-        toast.error("Failed to create order. Please try again.", { position: "top-right" });
+        toast.error("Failed to create order. Please try again.", {
+          position: "top-right",
+        });
       }
     } catch (error) {
       console.error("Error creating order:", error);
-      toast.error("Error creating order. Please try again.", { position: "top-right" });
+      toast.error("Error creating order. Please try again.", {
+        position: "top-right",
+      });
     }
   };
-*/
 
-const createOrder = async () => {
-  try {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-
-    const orderDetails = {
-      userId: user._id,
-      phoneNumber,
-      postalCode,
-      city,
-      streetAddress,
-      items: cartItems.map((item) => ({
-        itemId: item.itemId._id,
-        name: item.itemId.name,
-        imageUrl: item.itemId.image,
-        quantity: item.quantity,
-        price: item.itemId.price,
-      })),
-      totalAmount: calculateOverallTotal(),
-      status: "pending",
-    };
-
-    const response = await axios.post("/orders/create", orderDetails);
-
-    if (response.status === 201) {
-      // Generate a payment ID
-      const paymentId = uuidv4();
-
-      console.log(response)
-
-      // Save payment details in payment table
-      const paymentDetails = {
-        paymentId,
-        userId: user._id,
-        orderId: response.data.orderId, // Assuming response contains orderId
-        status: "completed",
-        Method : "Card",
-        amount: calculateOverallTotal(),
-      };
-
-      const paymentResponse = await axios.post("/payments/create", paymentDetails);
-
-      if (paymentResponse.status === 201) {
-        clearCart();
-        toast.success("Order created successfully and payment details saved!", { position: "top-right" });
-      } else {
-        console.error("Failed to save payment details");
-        toast.error("Failed to save payment details. Please try again.", { position: "top-right" });
-      }
-    } else {
-      console.error("Failed to create order");
-      toast.error("Failed to create order. Please try again.", { position: "top-right" });
-    }
-  } catch (error) {
-    console.error("Error creating order:", error);
-    toast.error("Error creating order. Please try again.", { position: "top-right" });
-  }
-};
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <ToastContainer />
-      {showCreditCardForm && <CreditCardForm onClose={() => setShowCreditCardForm(false)} createOrder={createOrder} />}
+      {showCreditCardForm && (
+        <CreditCardForm
+          onClose={() => setShowCreditCardForm(false)}
+          createOrder={createOrder}
+        />
+      )}
+      {showConfirmationModal && (
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity">
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+            &#8203;
+            <div
+              className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modal-headline"
+            >
+              <div>
+                <div className="mt-3 text-center sm:mt-0 sm:text-left">
+                  <h3
+                    className="text-lg leading-6 font-medium text-gray-900"
+                    id="modal-headline"
+                  >
+                    Are you sure you want to clear your cart?
+                  </h3>
+                </div>
+              </div>
+              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                <button
+                  onClick={() => {
+                    setShowConfirmationModal(false);
+                    clearCart();
+                  }}
+                  type="button"
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Clear Cart
+                </button>
+                <button
+                  onClick={() => setShowConfirmationModal(false)}
+                  type="button"
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {isLoading ? (
         <div>Loading...</div>
       ) : cartItems.length > 0 ? (
@@ -386,7 +321,13 @@ const createOrder = async () => {
                     if (/^[0-9]{0,10}$/.test(value)) {
                       setPhoneNumber(value);
                     }
-                  }}
+                  }}onBlur={() => {
+                    if (!/^(07)\d{8}$/.test(phoneNumber)) {
+                      toast.error("Phone number must be 10 digits and start with '07'.", {
+                        position: "top-right",
+                      });
+                      setPhoneNumber("");
+                  }}}
                   className="input"
                   placeholder="Phone Number"
                   required
@@ -407,6 +348,12 @@ const createOrder = async () => {
                     const value = e.target.value;
                     if (/^[0-9]{0,5}$/.test(value)) {
                       setPostalCode(value);
+                    }
+                  }}
+                  onBlur={() => {
+                    if (!/^[0-9]{5}/.test(postalCode)) {
+                      toast.error("Postal code must be 5 digits.", { position: "top-right" });
+                      setPostalCode("");
                     }
                   }}
                   className="input"
@@ -451,7 +398,7 @@ const createOrder = async () => {
             </div>
             <div className="flex justify-end mt-4 space-x-4">
               <button
-                onClick={clearCart}
+                onClick={() => setShowConfirmationModal(true)}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg"
               >
                 Clear Cart
@@ -481,4 +428,4 @@ const createOrder = async () => {
   );
 };
 
-export default CartPage;
+export default CartPages;

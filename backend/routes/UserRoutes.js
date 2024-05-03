@@ -9,7 +9,8 @@ const {
   fetchuser,
   deleteUser,
   adduser,
-  updaterole
+  updaterole,
+  resetpassword
   
 } = require("../controllers/testController");
 
@@ -32,6 +33,7 @@ router.put('/users/:userId',updaterole)
 
 //searchuser
 router.post('/api/add-user',adduser);
+router.put('/api/user/resetpassword',resetpassword)
 
 //-------
 //admin

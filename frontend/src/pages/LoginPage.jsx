@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import YourImage from "../assets/icecreamleft.png";
 
 const LoginPage = () => {
@@ -95,6 +95,9 @@ const LoginPage = () => {
             >
               Sign In
             </button>
+            <div>
+            <p className="mt-4 text-sm">Forgot password? <Link to="/ResetPassword" className="text-emerald-500">reset passowrd</Link></p>
+        </div>
           </form>
         </div>
       </div>

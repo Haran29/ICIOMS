@@ -6,11 +6,13 @@ const OrderHistoryPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [orderIdToDelete, setOrderIdToDelete] = useState(null);
 
   useEffect(() => {
     fetchOrderHistory();
   }, []);
-
+// function  fetchOrderHistory
   const fetchOrderHistory = async () => {
     try {
       const response = await axios.get("/orders");
@@ -21,6 +23,7 @@ const OrderHistoryPage = () => {
     }
   };
 
+  //function for updateOrderStatus
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
       await axios.put(`/orders/${orderId}`, { status: newStatus });
@@ -30,6 +33,7 @@ const OrderHistoryPage = () => {
     }
   };
 
+  // function for deleteorder
   const deleteOrder = async (orderId) => {
     try {
       await axios.delete(`/orders/${orderId}`);
@@ -38,9 +42,29 @@ const OrderHistoryPage = () => {
       console.error("Failed to delete order:", error.response ? error.response.data : error);
     }
   };
-  
+  // function to confirmDelete 
+  const confirmDelete = (orderId) => {
+    setOrderIdToDelete(orderId);
+    setShowConfirmation(true);
+  };
 
-  const filteredOrders = orders.filter(order => 
+// function handleDeleteConfirmed
+  const handleDeleteConfirmed = () => {
+    if (orderIdToDelete) {
+      deleteOrder(orderIdToDelete);
+      setOrderIdToDelete(null);
+    }
+    setShowConfirmation(false);
+  };
+
+
+  const handleDeleteCancelled = () => {
+    setOrderIdToDelete(null);
+    setShowConfirmation(false);
+  };
+
+  //fitering order details using data
+  const filteredOrders = orders.filter((order) =>
     order._id.toLowerCase().includes(searchQuery.toLowerCase()) &&
     (!startDate || new Date(order.createdAt) >= new Date(startDate)) &&
     (!endDate || new Date(order.createdAt) <= new Date(endDate))
@@ -97,7 +121,7 @@ const OrderHistoryPage = () => {
                     <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
-                <button onClick={() => deleteOrder(order._id)} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg ">Delete Order</button>
+                <button onClick={() => confirmDelete(order._id)} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700 text-lg">Delete Order</button>
               </div>
               <div className="p-6">
                 <h4 className="text-lg font-semibold mb-4">Items:</h4>
@@ -124,6 +148,19 @@ const OrderHistoryPage = () => {
             </div>
           ))}
         </div>
+
+        {/* Confirmation Modal */}
+        {showConfirmation && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75">
+            <div className="bg-white p-8 rounded-lg">
+              <p className="text-lg mb-4">Are you sure you want to delete this order?</p>
+              <div className="flex justify-between">
+                <button onClick={handleDeleteConfirmed} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:bg-red-700 mr-2">Yes</button>
+                <button onClick={handleDeleteCancelled} className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700 ml-2">No</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

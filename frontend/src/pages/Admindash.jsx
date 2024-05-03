@@ -105,19 +105,24 @@ const Admindash = () => {
                   <td className="px-4 py-2">{user.name}</td>
                   <td className="px-4 py-2">{user.email}</td>
                   <td className="px-4 py-2">{user.contact}</td>
-                  <td className="px-4 py-2">{user.role}</td>
+                  <td className="px-4 py-2">
+                    <select
+                      value={user.role} // Set the selected value to the user's current role
+                      onChange={(e) => updateUserRole(user._id, e.target.value)}
+                      className="bg-white border border-gray-300 rounded-md"
+                    >
+                      <option value="admin">Admin</option>
+                      <option value="user">User</option>
+                      <option value="salesperson">Salesperson</option>
+                      <option value="salesperson_manager">Salesperson Manager</option>
+                    </select>
+                  </td>
                   <td className="px-4 py-2">
                     <button
                       onClick={() => deleteUser(user._id)}
                       className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mr-2"
                     >
                       Delete
-                    </button>
-                    <button
-                      onClick={() => updateUserRole(user._id, 'Admin')}
-                      className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                    >
-                      Update
                     </button>
                   </td>
                 </tr>
