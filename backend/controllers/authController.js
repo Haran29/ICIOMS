@@ -46,6 +46,37 @@ const registerUser = async (req, res) => {
   }
 };
 
+/*const LoginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.json({
+        error: "User Not found",
+      });
+    }
+
+    const match = await comparePassword(password, user.password);
+    if (match) {
+      // Store user information in session
+      req.session.user = {
+        email: user.email,
+        id: user._id,
+        name: user.name,
+        role:user.role,
+      };
+      res.json(user);
+    } else {
+      return res.json({
+        error: "Password not Matched",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+*/
 
 const LoginUser = async (req, res) => {
   try {
