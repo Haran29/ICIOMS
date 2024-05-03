@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Image from "../assets/BackgroundMain3.jpg";
+import toast from "react-hot-toast";
+import Image from "../assets/BackgroundMain4.jpg"
+
+//Creating a Page to view all the batches, redirect to pages and Delete batches functions
 
 export default function ViewBatch() {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+
+  //Getting information from the database.
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,23 +27,43 @@ export default function ViewBatch() {
     fetchData();
   }, []);
 
+  //Formatiing date Structure
+
   const formatDate = (dateString) => {
     const newDate = new Date(dateString);
     const options = { year: "numeric", month: "long", day: "numeric" };
     return newDate.toLocaleDateString(undefined, options);
   };
 
+  //Deleting Batch from the Database
+
   const handleDelete = async (batchID) => {
     try {
-      await axios.delete(
-        `http://localhost:8000/api/products/delete-batch/${batchID}`
+      // Display a confirmation dialog
+      const isConfirmed = window.confirm(
+        "Batch will be completely removed, Are you sure you want to Continue?"
       );
-      // If deletion is successful, update the state to reflect the changes
-      setProducts(products.filter((product) => product.batchID !== batchID));
+
+      // If user confirms deletion
+      if (isConfirmed) {
+        await axios.delete(
+          `http://localhost:8000/api/products/delete-batch/${batchID}`
+        );
+
+        // If deletion is successful, update the state to reflect the changes
+        setProducts(products.filter((product) => product.batchID !== batchID));
+
+        toast.success("Batch was Successfully Deleted", {
+          className:
+            "bg-gradient-to-r from-gray-300 to-gray-500 text-white font-bold mt-16",
+        });
+      }
     } catch (error) {
       console.error("Error deleting batch:", error);
     }
   };
+
+  //Creating a Search Function
 
   const filteredProducts = products.filter(
     (product) =>

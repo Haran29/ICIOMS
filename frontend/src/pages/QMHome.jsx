@@ -1,6 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Image from "../assets/BackgroundMain2.jpg";
+import Image from "../assets/BackgroundMain4.jpg";
+
+//QM Home Page Creation
+//Redirecting to different  Components usings Links
 
 export default function QMHome() {
   return (

@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-export function IntensityBar({ intensity, setintensity, inputRef }) {
+//Creating Visual Objects that move along the Range for better UI and UX (For update component)
+
+//Object created for Intensity Range Component
+
+export function IntensityBar({
+  batchDetails,
+  setBatchDetails,
+  inputRefs,
+  setintensity,
+}) {
   return (
     <div
       style={{
@@ -8,8 +17,8 @@ export function IntensityBar({ intensity, setintensity, inputRef }) {
         top: "1px",
         left: "0",
         height: "16px",
-        width: `${(intensity / 10) * 100}%`,
-        backgroundColor: `${intensity >= 8 ? "green" : "red"}`,
+        width: `${(batchDetails.intensity / 10) * 100}%`,
+        backgroundColor: `${batchDetails.intensity >= 8 ? "green" : "red"}`,
         border: "1px solid black",
         borderRadius: "999px",
         zIndex: 1,
@@ -21,17 +30,31 @@ export function IntensityBar({ intensity, setintensity, inputRef }) {
       onClick={(e) => {
         const clickPosition = e.clientX - e.target.getBoundingClientRect().left;
         const rangeWidth = e.target.offsetWidth;
-        const newintensity = Math.round((clickPosition / rangeWidth) * 10);
-        setintensity(newintensity);
-        inputRef.current.focus(); // Set focus back to the range input
+        const newIntensity = Math.round((clickPosition / rangeWidth) * 10);
+        setintensity(newIntensity); // Ensure setintensity is used correctly here
+        setBatchDetails({
+          ...batchDetails,
+          intensity: newIntensity,
+        });
+        // Add null check to prevent accessing current property of undefined ref
+        if (inputRefs[0]?.current) {
+          inputRefs[0].current.focus(); // Set focus back to the range input
+        }
       }}
     >
-      <span style={{ color: "white" }}>{intensity}</span>
+      <span style={{ color: "white" }}>{batchDetails.intensity}</span>
     </div>
   );
 }
 
-export function AromaBar({ aroma, setaroma, inputRef }) {
+//Object created for Aroma Range Component
+
+export function AromaBar({
+  batchDetails,
+  setBatchDetails,
+  setaroma,
+  inputRefs,
+}) {
   return (
     <div
       style={{
@@ -39,8 +62,8 @@ export function AromaBar({ aroma, setaroma, inputRef }) {
         top: "1px",
         left: "0",
         height: "16px",
-        width: `${(aroma / 10) * 100}%`,
-        backgroundColor: `${aroma >= 8 ? "green" : "red"}`,
+        width: `${(batchDetails.aroma / 10) * 100}%`,
+        backgroundColor: `${batchDetails.aroma >= 8 ? "green" : "red"}`,
         border: "1px solid black",
         borderRadius: "999px",
         zIndex: 1,
@@ -52,17 +75,32 @@ export function AromaBar({ aroma, setaroma, inputRef }) {
       onClick={(e) => {
         const clickPosition = e.clientX - e.target.getBoundingClientRect().left;
         const rangeWidth = e.target.offsetWidth;
-        const newaroma = Math.round((clickPosition / rangeWidth) * 10);
-        setaroma(newaroma);
-        inputRef.current.focus(); // Set focus back to the range input
+        const newAroma = Math.round((clickPosition / rangeWidth) * 10);
+        setaroma(newAroma);
+
+        setBatchDetails({
+          ...batchDetails,
+          aroma: newAroma,
+        });
+
+        if (inputRefs[1]?.current) {
+          inputRefs[1].current.focus(); // Set focus back to the range input
+        }
       }}
     >
-      <span style={{ color: "white" }}>{aroma}</span>
+      <span style={{ color: "white" }}>{batchDetails.aroma}</span>
     </div>
   );
 }
 
-export function SweetnessBar({ sweetness, setsweetness, inputRef }) {
+//Object created for Sweetness Range Component
+
+export function SweetnessBar({
+  batchDetails,
+  setBatchDetails,
+  setsweetness,
+  inputRefs,
+}) {
   return (
     <div
       style={{
@@ -70,8 +108,8 @@ export function SweetnessBar({ sweetness, setsweetness, inputRef }) {
         top: "1px",
         left: "0",
         height: "16px",
-        width: `${(sweetness / 10) * 100}%`,
-        backgroundColor: `${sweetness >= 8 ? "green" : "red"}`,
+        width: `${(batchDetails.sweetness / 10) * 100}%`,
+        backgroundColor: `${batchDetails.sweetness >= 8 ? "green" : "red"}`,
         border: "1px solid black",
         borderRadius: "999px",
         zIndex: 1,
@@ -83,17 +121,31 @@ export function SweetnessBar({ sweetness, setsweetness, inputRef }) {
       onClick={(e) => {
         const clickPosition = e.clientX - e.target.getBoundingClientRect().left;
         const rangeWidth = e.target.offsetWidth;
-        const newsweetness = Math.round((clickPosition / rangeWidth) * 10);
-        setsweetness(newsweetness);
-        inputRef.current.focus(); // Set focus back to the range input
+        const newSweetness = Math.round((clickPosition / rangeWidth) * 10);
+        setsweetness(newSweetness);
+        setBatchDetails({
+          ...batchDetails,
+          sweetness: newSweetness,
+        });
+        // Add null check to prevent accessing current property of undefined ref
+        if (inputRefs[2]?.current) {
+          inputRefs[2].current.focus(); // Set focus back to the range input
+        }
       }}
     >
-      <span style={{ color: "white" }}>{sweetness}</span>
+      <span style={{ color: "white" }}>{batchDetails.sweetness}</span>
     </div>
   );
 }
 
-export function AftertasteBar({ aftertaste, setaftertaste, inputRef }) {
+//Object created for AfterTaste Range Component
+
+export function AftertasteBar({
+  batchDetails,
+  setBatchDetails,
+  setaftertaste,
+  inputRefs,
+}) {
   return (
     <div
       style={{
@@ -101,8 +153,8 @@ export function AftertasteBar({ aftertaste, setaftertaste, inputRef }) {
         top: "1px",
         left: "0",
         height: "16px",
-        width: `${(aftertaste / 10) * 100}%`,
-        backgroundColor: `${aftertaste >= 8 ? "green" : "red"}`,
+        width: `${(batchDetails.aftertaste / 10) * 100}%`,
+        backgroundColor: `${batchDetails.aftertaste >= 8 ? "green" : "red"}`,
         border: "1px solid black",
         borderRadius: "999px",
         zIndex: 1,
@@ -116,15 +168,29 @@ export function AftertasteBar({ aftertaste, setaftertaste, inputRef }) {
         const rangeWidth = e.target.offsetWidth;
         const newaftertaste = Math.round((clickPosition / rangeWidth) * 10);
         setaftertaste(newaftertaste);
-        inputRef.current.focus(); // Set focus back to the range input
+        setBatchDetails({
+          ...batchDetails,
+          aftertaste: newaftertaste,
+        });
+        // Add null check to prevent accessing current property of undefined ref
+        if (inputRefs[3]?.current) {
+          inputRefs[3].current.focus(); // Set focus back to the range input
+        }
       }}
     >
-      <span style={{ color: "white" }}>{aftertaste}</span>
+      <span style={{ color: "white" }}>{batchDetails.aftertaste}</span>
     </div>
   );
 }
 
-export function ConsistencyBar({ consistency, setconsistency, inputRef }) {
+//Object created for Consistency Range Component
+
+export function ConsistencyBar({
+  batchDetails,
+  setBatchDetails,
+  setconsistency,
+  inputRefs,
+}) {
   return (
     <div
       style={{
@@ -132,8 +198,8 @@ export function ConsistencyBar({ consistency, setconsistency, inputRef }) {
         top: "1px",
         left: "0",
         height: "16px",
-        width: `${(consistency / 10) * 100}%`,
-        backgroundColor: `${consistency >= 8 ? "green" : "red"}`,
+        width: `${(batchDetails.consistency / 10) * 100}%`,
+        backgroundColor: `${batchDetails.consistency >= 8 ? "green" : "red"}`,
         border: "1px solid black",
         borderRadius: "999px",
         zIndex: 1,
@@ -145,17 +211,31 @@ export function ConsistencyBar({ consistency, setconsistency, inputRef }) {
       onClick={(e) => {
         const clickPosition = e.clientX - e.target.getBoundingClientRect().left;
         const rangeWidth = e.target.offsetWidth;
-        const newconsistency = Math.round((clickPosition / rangeWidth) * 10);
-        setconsistency(newconsistency);
-        inputRef.current.focus(); // Set focus back to the range input
+        const newConsistency = Math.round((clickPosition / rangeWidth) * 10);
+        setconsistency(newConsistency);
+        setBatchDetails({
+          ...batchDetails,
+          consistency: newConsistency,
+        });
+
+        if (inputRefs[4]?.current) {
+          inputRefs[4].current.focus();
+        }
       }}
     >
-      <span style={{ color: "white" }}>{consistency}</span>
+      <span style={{ color: "white" }}>{batchDetails.consistency}</span>
     </div>
   );
 }
 
-export function AppearenceBar({ appearence, setappearence, inputRef }) {
+//Object created for Appearence Range Component
+
+export function AppearenceBar({
+  batchDetails,
+  setBatchDetails,
+  setappearence,
+  inputRefs,
+}) {
   return (
     <div
       style={{
@@ -163,8 +243,8 @@ export function AppearenceBar({ appearence, setappearence, inputRef }) {
         top: "1px",
         left: "0",
         height: "16px",
-        width: `${(appearence / 10) * 100}%`,
-        backgroundColor: `${appearence >= 8 ? "green" : "red"}`,
+        width: `${(batchDetails.appearence / 10) * 100}%`,
+        backgroundColor: `${batchDetails.appearence >= 8 ? "green" : "red"}`,
         border: "1px solid black",
         borderRadius: "999px",
         zIndex: 1,
@@ -178,18 +258,28 @@ export function AppearenceBar({ appearence, setappearence, inputRef }) {
         const rangeWidth = e.target.offsetWidth;
         const newappearence = Math.round((clickPosition / rangeWidth) * 10);
         setappearence(newappearence);
-        inputRef.current.focus(); // Set focus back to the range input
+        setBatchDetails({
+          ...batchDetails,
+          appearence: newappearence,
+        });
+        // Add null check to prevent accessing current property of undefined ref
+        if (inputRefs[5]?.current) {
+          inputRefs[5].current.focus(); // Set focus back to the range input
+        }
       }}
     >
-      <span style={{ color: "white" }}>{appearence}</span>
+      <span style={{ color: "white" }}>{batchDetails.appearence}</span>
     </div>
   );
 }
 
+//Object created for PackageQuality Range Component
+
 export function PackageQualityBar({
-  packageQuality,
+  batchDetails,
+  setBatchDetails,
   setpackageQuality,
-  inputRef,
+  inputRefs,
 }) {
   return (
     <div
@@ -198,8 +288,10 @@ export function PackageQualityBar({
         top: "1px",
         left: "0",
         height: "16px",
-        width: `${(packageQuality / 10) * 100}%`,
-        backgroundColor: `${packageQuality >= 8 ? "green" : "red"}`,
+        width: `${(batchDetails.packageQuality / 10) * 100}%`,
+        backgroundColor: `${
+          batchDetails.packageQuality >= 8 ? "green" : "red"
+        }`,
         border: "1px solid black",
         borderRadius: "999px",
         zIndex: 1,
@@ -213,15 +305,29 @@ export function PackageQualityBar({
         const rangeWidth = e.target.offsetWidth;
         const newpackageQuality = Math.round((clickPosition / rangeWidth) * 10);
         setpackageQuality(newpackageQuality);
-        inputRef.current.focus(); // Set focus back to the range input
+        setBatchDetails({
+          ...batchDetails,
+          packageQuality: newpackageQuality,
+        });
+        // Add null check to prevent accessing current property of undefined ref
+        if (inputRefs[6]?.current) {
+          inputRefs[6].current.focus(); // Set focus back to the range input
+        }
       }}
     >
-      <span style={{ color: "white" }}>{packageQuality}</span>
+      <span style={{ color: "white" }}>{batchDetails.packageQuality}</span>
     </div>
   );
 }
 
-export function MeltingBar({ melting, setmelting, inputRef }) {
+//Object created for Melting Range Component
+
+export function MeltingBar({
+  batchDetails,
+  setBatchDetails,
+  setmelting,
+  inputRefs,
+}) {
   return (
     <div
       style={{
@@ -229,8 +335,8 @@ export function MeltingBar({ melting, setmelting, inputRef }) {
         top: "1px",
         left: "0",
         height: "16px",
-        width: `${(melting / 10) * 100}%`,
-        backgroundColor: `${melting >= 8 ? "green" : "red"}`,
+        width: `${(batchDetails.melting / 10) * 100}%`,
+        backgroundColor: `${batchDetails.melting >= 8 ? "green" : "red"}`,
         border: "1px solid black",
         borderRadius: "999px",
         zIndex: 1,
@@ -244,13 +350,22 @@ export function MeltingBar({ melting, setmelting, inputRef }) {
         const rangeWidth = e.target.offsetWidth;
         const newmelting = Math.round((clickPosition / rangeWidth) * 10);
         setmelting(newmelting);
-        inputRef.current.focus(); // Set focus back to the range input
+        setBatchDetails({
+          ...batchDetails,
+          melting: newmelting,
+        });
+        // Add null check to prevent accessing current property of undefined ref
+        if (inputRefs[7]?.current) {
+          inputRefs[7].current.focus(); // Set focus back to the range input
+        }
       }}
     >
-      <span style={{ color: "white" }}>{melting}</span>
+      <span style={{ color: "white" }}>{batchDetails.melting}</span>
     </div>
   );
 }
+
+//Object created for Overall Score Range Component
 
 export function OverallScore({ overallScore }) {
   return (

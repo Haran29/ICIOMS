@@ -1,7 +1,6 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast from "react-hot-toast";
 import axios from "axios";
 import {
   IntensityBar,
@@ -21,7 +20,12 @@ import {
   handleBatchIDBlur,
   handleBatchNameChange,
   handleBatchNameBlur,
+  handleReceivedDateBlur,
+  checkQuantity,
+  checkReceivedDate,
 } from "../component/ErrorHandler";
+
+//Create Batch Component
 
 export default function CreateBatch() {
   const [batchID, setBatchID] = useState("");
@@ -42,18 +46,17 @@ export default function CreateBatch() {
   const inputRefs = Array.from({ length: 8 }).map(() => useRef(null));
   const navigate = useNavigate();
 
+  //Handling function when form submitted
+
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
     try {
-      if (quantity === 0) {
-        toast.error("Quantity cannot be 0");
-        return; // Exit the function if quantity is 0
-      }
+      const quantityError = checkQuantity(quantity, toast);
+      const receivedDateError = checkReceivedDate(receivedDate, toast);
 
-      const currentDate = new Date().toISOString().split("T")[0];
-      if (receivedDate > currentDate) {
-        toast.error("Received date cannot be greater than the current date");
-        return; // Exit the function if received date is greater than current date
+      if (quantityError || receivedDateError) {
+        // Exit the function if any error occurred
+        return;
       }
 
       const SubmissionResponse = await axios.post(
@@ -75,13 +78,41 @@ export default function CreateBatch() {
         }
       );
 
+      //Removing error toast messages and displaying success toast message when Batch is Successfully Created.
+
+      toast.remove();
+
+      toast.success("Batch was Successfully Created", {
+        className:
+          "bg-gradient-to-r from-green-300 to-green-500 text-white font-bold mt-16",
+      });
+
+      //Navigating to ViewBatch component
+
       navigate("/view-batch");
 
       console.log(SubmissionResponse.data); // Handle response from backend
     } catch (error) {
       if (error.response && error.response.status === 409) {
         // Batch ID already exists, show toast message
-        toast.error("Batch ID already exists");
+        toast.error("Batch ID already exists", {
+          className: "bg-red-500 text-white font-bold mt-13",
+        });
+      } else if (error.response && error.response.status === 410) {
+        // Batch ID already exists, show toast message
+        toast.error("Batch ID must start with 'B' followed by 4 digits", {
+          className: "bg-red-500 text-white font-bold mt-13",
+        });
+      } else if (error.response && error.response.status === 411) {
+        // Batch Name is Blank, show toast message
+        toast.error("Batch Name cannot be kept Blank", {
+          className: "bg-red-500 text-white font-bold mt-13",
+        });
+      } else if (error.response && error.response.status === 412) {
+        // Batch Name is Blank, show toast message
+        toast.error("Quantity cannot be 0 or a Negative value", {
+          className: "bg-red-500 text-white font-bold mt-13",
+        });
       } else {
         // Other errors, log to console
         console.error("Error submitting form:", error);
@@ -92,6 +123,8 @@ export default function CreateBatch() {
   const handleCancel = () => {
     navigate("/qm-home"); // Navigate to a different page on cancel
   };
+
+  //Calculating overall Score
 
   useEffect(() => {
     const calculateOverallScore = () => {
@@ -138,7 +171,7 @@ export default function CreateBatch() {
             </h1>
             <hr className="border-slate-500 border-t-2 mx-auto w-4/5 mt-2" />
 
-            <ToastContainer />
+            {/*Hiding old range bar components (the dragging button)*/}
 
             <style jsx>{`
               input[type="range"]::-webkit-slider-thumb {
@@ -375,6 +408,7 @@ export default function CreateBatch() {
                     name="receivedDate"
                     value={receivedDate}
                     onChange={(e) => setReceivedDate(e.target.value)}
+                    onBlur={(e) => handleReceivedDateBlur(e, toast)}
                     className="w-full border border-gray-300 rounded px-3 py-1 mb-2"
                   />
 

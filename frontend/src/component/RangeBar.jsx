@@ -1,5 +1,9 @@
 import React from "react";
 
+//Creating Visual Objects that move along the Range for better UI and UX
+
+//Object created for Intensity Range Component
+
 export function IntensityBar({ intensity, setintensity, inputRef }) {
   return (
     <div
@@ -30,6 +34,8 @@ export function IntensityBar({ intensity, setintensity, inputRef }) {
     </div>
   );
 }
+
+//Object created for Aroma Range Component
 
 export function AromaBar({ aroma, setaroma, inputRef }) {
   return (
@@ -62,6 +68,8 @@ export function AromaBar({ aroma, setaroma, inputRef }) {
   );
 }
 
+//Object created for Sweetness Range Component
+
 export function SweetnessBar({ sweetness, setsweetness, inputRef }) {
   return (
     <div
@@ -92,6 +100,8 @@ export function SweetnessBar({ sweetness, setsweetness, inputRef }) {
     </div>
   );
 }
+
+//Object created for AfterTaste Range Component
 
 export function AftertasteBar({ aftertaste, setaftertaste, inputRef }) {
   return (
@@ -124,6 +134,8 @@ export function AftertasteBar({ aftertaste, setaftertaste, inputRef }) {
   );
 }
 
+//Object created for Consistency Range Component
+
 export function ConsistencyBar({ consistency, setconsistency, inputRef }) {
   return (
     <div
@@ -155,6 +167,8 @@ export function ConsistencyBar({ consistency, setconsistency, inputRef }) {
   );
 }
 
+//Object created for Appearence Range Component
+
 export function AppearenceBar({ appearence, setappearence, inputRef }) {
   return (
     <div
@@ -185,6 +199,8 @@ export function AppearenceBar({ appearence, setappearence, inputRef }) {
     </div>
   );
 }
+
+//Object created for PackageQuality Range Component
 
 export function PackageQualityBar({
   packageQuality,
@@ -221,6 +237,8 @@ export function PackageQualityBar({
   );
 }
 
+//Object created for Melting Range Component
+
 export function MeltingBar({ melting, setmelting, inputRef }) {
   return (
     <div
@@ -251,6 +269,8 @@ export function MeltingBar({ melting, setmelting, inputRef }) {
     </div>
   );
 }
+
+//Object created for Overall Score Range Component
 
 export function OverallScore({ overallScore }) {
   return (

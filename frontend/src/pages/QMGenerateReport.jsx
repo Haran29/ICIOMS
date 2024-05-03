@@ -3,6 +3,7 @@ import axios from "axios";
 import Chart from "chart.js/auto";
 import { useNavigate } from "react-router-dom";
 import html2pdf from "html2pdf.js";
+import toast from "react-hot-toast";
 
 export default function GenerateReport() {
   const [startDate, setStartDate] = useState("");
@@ -13,6 +14,8 @@ export default function GenerateReport() {
   const [showChart, setShowChart] = useState(false);
   const navigate = useNavigate();
 
+  //if  data available, calling statistical graphs
+
   useEffect(() => {
     if (showChart) {
       if (reportData.length > 0) {
@@ -22,6 +25,8 @@ export default function GenerateReport() {
       }
     }
   }, [showChart]);
+
+  // Generating Data based on Summerized Information
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,11 +50,14 @@ export default function GenerateReport() {
         }
       );
       setReportData(response.data);
+      toast.remove();
     } catch (error) {
       console.error("Error fetching report data:", error);
     }
     setLoading(false);
   };
+
+  //Formating the Date
 
   const formatDate = (dateString) => {
     const newDate = new Date(dateString);
@@ -66,10 +74,21 @@ export default function GenerateReport() {
       acc[date][curr.status]++;
       return acc;
     }, {});
-    const labels = Object.keys(counts);
-    const data = labels.map((date) => counts[date]);
 
-    // Generate the graph
+    const labels = Object.keys(counts);
+
+    // Check if labels array is not empty
+    if (labels.length === 0) {
+      return; // Exit early if no data is available
+    }
+
+    // Sort the labels array in ascending order
+    const sortedLabels = labels.sort((a, b) => new Date(a) - new Date(b));
+
+    const data = sortedLabels.map((date) => counts[date]);
+
+    // Generate the graph - Line Graph
+
     const ctx = document.getElementById("statusChart").getContext("2d");
     new Chart(ctx, {
       type: "line",
@@ -105,6 +124,22 @@ export default function GenerateReport() {
     });
   };
 
+  //Generating Statistical Tables
+
+  const handleGenerateStatistics = () => {
+    if (reportData.length === 0) {
+      toast.error("Please generate the report first", {
+        className: "bg-red-500 text-white font-bold",
+      });
+      return;
+    }
+    generateGraph();
+    generateOverallScore();
+    generateScoring();
+  };
+
+  //Creating Bar Chart Graph
+
   const generateScoring = () => {
     setShowChart(true);
 
@@ -121,16 +156,22 @@ export default function GenerateReport() {
 
     // Define colors for scoring categories
     const colors = [
-      "rgba(255, 255, 0, 1)", // Yellow
-      "rgba(255, 101, 0, 1)", // Orange
-      "rgba(255, 0, 0, 1)", // Red
-      "rgba(171, 0, 255, 1)", // Purple
-      "rgba(255, 0, 255, 1)", // Pink
-      "rgba(15, 255, 252, 1)", // Sky Blue
-      "rgba(0, 0, 255, 1)", // Blue
-      "rgba(0, 249, 111, 1)", // Green
+      "rgba(0, 123, 255, 1)", // Blue
+      "rgba(255, 193, 7, 1)", // Yellow
+      "rgba(40, 167, 69, 1)", // Green
+      "rgba(220, 53, 69, 1)", // Red
+      "rgba(108, 117, 125, 1)", // Gray
+      "rgba(255, 0, 130, 1)", // Pink
+      "rgba(23, 162, 184, 1)", // Cyan
+      "rgba(255, 138, 0, 1)", // Orange
+      "rgba(255, 65, 105, 1)", // Magenta
+      "rgba(64, 255, 0, 1)", // Lime
+      "rgba(166, 85, 204, 1)", // Purple
+      "rgba(0, 217, 255, 1)", // Aqua
+      "rgba(255, 193, 203, 1)", // Light Pink
+      "rgba(75, 192, 192, 1)", // Turquoise
+      "rgba(153, 102, 255, 1)", // Light Purple
     ];
-
     // Generate datasets for each batch
     const datasets = [];
     for (let i = 0; i < batchIDs.length; i++) {
@@ -152,7 +193,7 @@ export default function GenerateReport() {
       });
     }
 
-    // Generate the chart
+    // Generate the bar chart
     const ctx = document.getElementById("scoringChart").getContext("2d");
     new Chart(ctx, {
       type: "bar",
@@ -189,6 +230,8 @@ export default function GenerateReport() {
       },
     });
   };
+
+  //Generating the Pie Chart
 
   const generateOverallScore = () => {
     setShowChart(true);
@@ -247,7 +290,16 @@ export default function GenerateReport() {
     });
   };
 
+  //Generating a PDF to Summerize Data and get the Report in a PDF Version
+
   const handleGeneratePDF = () => {
+    if (reportData.length === 0) {
+      toast.error("Please generate the report first", {
+        className: "bg-red-500 text-white font-bold",
+      });
+      return;
+    }
+
     const element = document.getElementById("capture");
     const opt = {
       margin: 0,
@@ -262,6 +314,14 @@ export default function GenerateReport() {
     };
 
     html2pdf().from(element).set(opt).save();
+
+    toast.success(
+      "Report Generate Successfully, please check your Downloads.",
+      {
+        className:
+          "bg-gradient-to-r from-green-300 to-green-500 text-white font-bold mt-16",
+      }
+    );
   };
 
   return (
@@ -329,11 +389,7 @@ export default function GenerateReport() {
         </form>
         <div className="text-center">
           <button
-            onClick={() => {
-              generateGraph();
-              generateOverallScore();
-              generateScoring();
-            }}
+            onClick={handleGenerateStatistics}
             className=" mb-5 bg-blue-500 hover:bg-blue-600 active:opacity-80 text-white font-bold py-2 px-4 w-40 rounded "
           >
             Statistics
