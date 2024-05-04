@@ -104,7 +104,7 @@ const App = () => {
           <Route path="/update-supplier/:supplierid" element={<UpdateSupplier/>}/>
 
           <Route path="/place-order" element={<PlaceOrder/>}/>
-          <Route path="/choose-place-order/:supplierid" elemen={<ConformOrder/>}/>
+          <Route path="/choose-place-order/:supplierid" element={<ConformOrder/>}/>
           <Route path="/ongoing-order" element={<OngoingOrder/>}/>
           <Route path="/order-history" element={<SupOrderHistory/>}/>
 
