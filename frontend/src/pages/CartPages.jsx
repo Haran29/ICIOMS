@@ -326,10 +326,9 @@ const CartPages = () => {
                   value={postalCode}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (/^[0-9]{0,5}$/.test(value)){
+                    if (/^[0-9]{0,5}$/.test(value)) {
                       setPostalCode(value);
                     }
-                    
                   }}
                   className="input"
                   placeholder="Postal Code"
