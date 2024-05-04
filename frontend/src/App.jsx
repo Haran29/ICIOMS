@@ -39,6 +39,15 @@ import AllProductsPage from "./pages/AllProductPage"
 import ManageProductPage from "./pages/ManageProductPage"
 import  EditProductPage from "./pages/EditProductPage"
 
+// isira
+import SuplierList from "./pages/Supplier-pages/SuplierList";
+import AddSupplier from "./pages/Supplier-pages/AddSupplier";
+import UpdateSupplier from "./pages/Supplier-pages/UpdateSupplier";
+import PlaceOrder from "./pages/Supplier-pages/PlaceOrder";
+import ConformOrder from "./pages/Supplier-pages/ConformOrder";
+import OngoingOrder from "./pages/Supplier-pages/OngoingOrder";
+import SupOrderHistory from "./pages/Supplier-pages/SupOrderHistory";
+
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
@@ -88,6 +97,16 @@ const App = () => {
           <Route path="/AllProductsPage" element={<AllProductsPage />} />
           <Route path="/ManageProductPage" element={<ManageProductPage />} />
           <Route path="/update-item/:productId" component={EditProductPage} />
+
+           {/* Isira */}
+           <Route path="/list-suplier" element={<SuplierList/>}/>
+          <Route path="/add-supplier" element={<AddSupplier/>}/>
+          <Route path="/update-supplier/:supplierid" element={<UpdateSupplier/>}/>
+
+          <Route path="/place-order" element={<PlaceOrder/>}/>
+          <Route path="/choose-place-order/:supplierid" elemen={<ConformOrder/>}/>
+          <Route path="/ongoing-order" element={<OngoingOrder/>}/>
+          <Route path="/order-history" element={<SupOrderHistory/>}/>
 
 
         </Routes>
