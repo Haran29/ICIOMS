@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaSearch } from "react-icons/fa"; 
+import { FaSearch } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -109,7 +109,7 @@ const OrderOnlinePage = () => {
       fetchUserCart(userId);
 
       toast.success("Item added to cart", {
-        position: "top-center",
+        position: "top-right",
       });
     } catch (error) {
       toast.error("Error adding item to cart:", {
@@ -151,7 +151,6 @@ const OrderOnlinePage = () => {
   const removeFromDatabase = async (itemId) => {
     try {
       const response = await axios.delete(`/cart/${userId}/item/${itemId}`);
-      console.log("Item removed from the database:", response.data);
     } catch (error) {
       toast.error("Error removing item from the database:", {
         position: "top-right",

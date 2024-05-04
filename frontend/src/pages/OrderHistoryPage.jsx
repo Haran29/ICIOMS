@@ -63,7 +63,7 @@ const OrderHistoryPage = () => {
     setShowConfirmation(false);
   };
 
-  //fitering order details using data
+  //fitering order id using data
   const filteredOrders = orders.filter((order) =>
     order._id.toLowerCase().includes(searchQuery.toLowerCase()) &&
     (!startDate || new Date(order.createdAt) >= new Date(startDate)) &&
@@ -73,7 +73,7 @@ const OrderHistoryPage = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="max-w-4xl w-full p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-3xl font-semibold mb-8 text-center">Order History</h2>
+        <h2 className="text-3xl font-semibold mb-8 text-center">Manage Orders</h2>
 
         <div className="mb-6">
           <input

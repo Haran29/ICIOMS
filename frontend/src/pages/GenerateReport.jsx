@@ -35,7 +35,8 @@ const GenerateReport = () => {
         order._id.toLowerCase().includes(searchQuery.toLowerCase()) &&
         (!startDate || new Date(order.createdAt) >= new Date(startDate)) &&
         (!endDate || new Date(order.createdAt) <= new Date(endDate)) &&
-        (!orderStatus || order.status.toLowerCase() === orderStatus.toLowerCase())
+        (!orderStatus ||
+          order.status.toLowerCase() === orderStatus.toLowerCase())
     );
     setFilteredOrders(filtered);
   };
@@ -67,7 +68,7 @@ const GenerateReport = () => {
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="max-w-4xl w-full p-8 bg-white rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold mb-4 text-center">
-          Order History
+          Generate Report
         </h2>
 
         {/* Search Bar */}
@@ -113,7 +114,6 @@ const GenerateReport = () => {
             <option value="Pending">Pending</option>
             <option value="Completed">Completed</option>
             <option value="Cancelled">Cancelled</option>
-            
           </select>
         </div>
 
@@ -127,7 +127,7 @@ const GenerateReport = () => {
         </div>
 
         <div className="space-y-8" id="pdf-container" ref={componentRef}>
-          {/* Dynamic Heading */}
+          
           {startDate && endDate && (
             <h3 className="text-xl font-semibold mb-6 text-center">
               Order History ({formatDate(startDate)} - {formatDate(endDate)})
