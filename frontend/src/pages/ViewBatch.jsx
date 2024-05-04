@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import Image from "../assets/BackgroundMain4.jpg"
+import Image from "../assets/BackgroundMain3.jpg"
+import QMNavBar from "../component/QMNavBar";
 
 //Creating a Page to view all the batches, redirect to pages and Delete batches functions
 

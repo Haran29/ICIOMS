@@ -7,8 +7,8 @@ require("dotenv").config({ path: "../.env" });
 const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
+  //port: 587 ,
+  //secure: false,
   auth: {
     user: process.env.USER,
     pass: process.env.APP_PASSWORD,
@@ -92,7 +92,7 @@ const addProduct = async (req, res, next) => {
     // If the overall score is less than 64, send an email notification
 
     if (overallScore < 64) {
-      let emailTextCreated = `Dear User,\n\nWe regret to inform you that the Quality batch with ID ${batchID} received on ${receivedDate} with a Quantity of ${quantity} was noted with an Overall Score of ${overallScore}. 
+      let emailText = `Dear User,\n\nWe regret to inform you that the Quality batch with ID ${batchID} received on ${receivedDate} with a Quantity of ${quantity} was noted with an Overall Score of ${overallScore}. 
       \n\nAs per our standards, a minimum Overall Score of 64 is required to ensure optimal quality and customer satisfaction.
       \n\nAs a result, the quality batch ${batchID} has been Rejected. Please see below for specific areas in which the Batch fell short.\n\n`;
 
@@ -117,7 +117,7 @@ const addProduct = async (req, res, next) => {
         from: process.env.USER,
         to: process.env.USER,
         subject: `Batch ${batchID} - ${batchName} Rejection - Low Overall Score Notification`,
-        text: emailTextCreated,
+        text: emailText,
       });
     }
 
@@ -188,7 +188,7 @@ const updateProduct = async (req, res) => {
     //If overall Score is less than 64, Notifying user via Mail
 
     if (newOverallScore < 64) {
-      let emailTextUpdated = `Dear User,\n\nWe regret to inform you that the Quality batch with ID ${updatedProduct.batchID} received on ${formattedReceivedDate} with a Quantity of ${updatedProduct.quantity} was Updated on ${formattedDate} which resulted an Overall Score of ${newOverallScore}. 
+      let emailText = `Dear User,\n\nWe regret to inform you that the Quality batch with ID ${updatedProduct.batchID} received on ${formattedReceivedDate} with a Quantity of ${updatedProduct.quantity} was Updated on ${formattedDate} which resulted an Overall Score of ${newOverallScore}. 
       \n\nAs per our standards, a minimum Overall Score of 64 is required to ensure optimal quality and customer satisfaction.
       \n\nAs a result, the quality batch ${updatedProduct.batchID} has been Rejected. Please see below for specific areas in which the Batch fell short after the Update.\n\n`;
 
@@ -217,7 +217,7 @@ const updateProduct = async (req, res) => {
         from: process.env.USER,
         to: process.env.USER,
         subject: `Batch ${updatedProduct.batchID} - ${updatedProduct.batchName}  Rejection - Low Overall Score Notification`,
-        text: emailTextUpdated,
+        text: emailText,
       });
     }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import QMNavBar from "../component/QMNavBar"
 import {
   IntensityBar,
   AromaBar,
@@ -13,7 +14,7 @@ import {
   PackageQualityBar,
   OverallScore,
 } from "../component/UpdateRangeBar";
-import Image from "../assets/BackgroundMain4.jpg";
+import Image from "../assets/BackgroundMain3.jpg";
 
 //Creating Page for Update Batch Function
 
@@ -204,6 +205,8 @@ export default function UpdateBatch() {
   ]);
 
   return (
+    <>
+    <QMNavBar/>
     <div
       className="container max-w-full max-h-full"
       style={{
@@ -609,5 +612,6 @@ export default function UpdateBatch() {
         </div>
       </div>
     </div>
+    </>
   );
 }
