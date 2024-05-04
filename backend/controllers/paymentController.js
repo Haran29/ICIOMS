@@ -17,7 +17,16 @@ const handlePayment = (req, res) => {
 
 const savePayment = async (req, res) => {
   try {
-    const { paymentId, userId, orderId, status, Method, amount } = req.body;
+    const { paymentId, userId, orderId, Method, amount } = req.body;
+
+    let status;
+    if (Method === "Card") {
+      status = "Completed"; // Set status to "Completed" for Card payments
+    } else if (Method === "Cash") {
+      status = "Pending"; // Set status to "Pending" for Pay on Delivery payments
+    } else {
+      status = "Unknown"; // Handle other payment methods if needed
+    }
 
     // Create a new Payment document
     const payment = new Payment({
@@ -33,20 +42,14 @@ const savePayment = async (req, res) => {
     await payment.save();
 
     // Send a success response
-    res
-      .status(201)
-      .json({ message: "Payment details saved successfully", payment });
+    res.status(201).json({ message: "Payment details saved successfully", payment });
   } catch (error) {
     console.error("Error saving payment details:", error);
     // Send an error response
-    res
-      .status(500)
-      .json({
-        message: "Failed to save payment details",
-        error: error.message,
-      });
+    res.status(500).json({ message: "Failed to save payment details", error: error.message });
   }
 };
+
 
 const getPaymentsByUserId = async (req, res) => {
   try {
@@ -70,17 +73,21 @@ const fetchAllPayment = async (req, res) => {
   }
 }
 
-const updatePayment =  async (req, res) => {
+const updatePayment = async (req, res) => {
   try {
-      const payment = await Payment.findByIdAndUpdate(req.params.id, req.body, { new: true });
-      if (!payment) {
-          return res.status(404).json({ message: 'Payment not found' });
-      }
-      res.status(200).json({ message: 'Payment updated successfully', payment: payment });
+    const { status } = req.body;
+    const payment = await Payment.findByIdAndUpdate(req.params.id, { status }, { new: true });
+
+    if (!payment) {
+      return res.status(404).json({ message: "Payment not found" });
+    }
+
+    res.status(200).json({ message: "Payment updated successfully", payment });
   } catch (error) {
-      res.status(500).json({ message: 'Failed to update payment', error: error.message });
+    res.status(500).json({ message: "Failed to update payment", error: error.message });
   }
 };
+
 
 const deletePayment = async (req, res) => {
   try {
@@ -100,5 +107,5 @@ module.exports = {
   getPaymentsByUserId,
   fetchAllPayment,
   updatePayment ,
-  deletePayment
+  deletePayment,
 };

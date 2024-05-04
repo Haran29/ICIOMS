@@ -38,6 +38,7 @@ import AddProductPage from "./pages/AddProductPage"
 import AllProductsPage from "./pages/AllProductPage"
 import ManageProductPage from "./pages/ManageProductPage"
 import  EditProductPage from "./pages/EditProductPage"
+import CreatePromoCode from "./component/CreatePromoCode";
 
 // isira
 import SuplierList from "./pages/Supplier-pages/SuplierList";
@@ -82,6 +83,8 @@ const App = () => {
           <Route path="/PaymentList" element={<PaymentList />} />\
           <Route path="/ManagePayment" element={<ManagePayment />} />
           <Route path="/GeneratePaymentReport" element={<GeneratePaymentReport/>} />
+          <Route path="/CreatePromoCode" element={<CreatePromoCode/>} />
+
           <Route path="/Adduser" element={<Adduser/>} />
           <Route path="/Admindash" element={<Admindash/>} />
           <Route path="/ManageProfile" element={<ManageProfile/>} />

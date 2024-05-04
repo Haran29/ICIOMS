@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import "react-toastify/dist/ReactToastify.css";
 import CartItem from "../component/CartItem";
 import CreditCardForm from "../component/CreditCardForm";
+import PayonDelivery from "../component/PayonDelivery";
 
 const CartPages = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -15,6 +16,10 @@ const CartPages = () => {
   const [showCreditCardForm, setShowCreditCardForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("Select Option");
+  const [promoCode, setPromoCode] = useState('');
+  const [discount, setDiscount] = useState(0);
+  const [showPayonDelivery, setShowPayonDelivery] = useState(false);
 
   useEffect(() => {
     fetchCartItems();
@@ -128,7 +133,12 @@ const CartPages = () => {
     cartItems.forEach((cartItem) => {
       total += cartItem.quantity * cartItem.itemId.price;
     });
-    return total.toFixed(2);
+  
+    // Calculate the discounted total
+    const discountedTotal = total - (total * discount) / 100;
+  
+    // Return the discounted total rounded to 2 decimal places
+    return discountedTotal.toFixed(2);
   };
 
   // handlepayment function
@@ -137,7 +147,15 @@ const CartPages = () => {
     if (!validateForm()) {
       return;
     }
+    const selectedPaymentMethod = document.getElementById("paymentMethod").value;
+
+    if (selectedPaymentMethod === "Card") {
     setShowCreditCardForm(true);
+
+    }else if (selectedPaymentMethod === "Cash"){
+    setShowPayonDelivery(true);
+    console.log("Pay On Delivery selected");
+    }
   };
 
   const validateForm = () => {
@@ -172,6 +190,7 @@ const CartPages = () => {
         postalCode,
         city,
         streetAddress,
+        paymentMethod,
         items: cartItems.map((item) => ({
           itemId: item.itemId._id,
           name: item.itemId.name,
@@ -189,46 +208,53 @@ const CartPages = () => {
         // Generate a payment ID
         const paymentId = uuidv4();
 
-        console.log(response);
+        console.log(response)
 
         // Save payment details in payment table
         const paymentDetails = {
           paymentId,
           userId: user._id,
-          orderId: response.data.orderId,
+          orderId: response.data.orderId, 
           status: "completed",
-          Method: "Card",
+          Method : paymentMethod,
           amount: calculateOverallTotal(),
         };
 
-        const paymentResponse = await axios.post(
-          "/payments/create",
-          paymentDetails
-        );
+        const paymentResponse = await axios.post("/payments/create", paymentDetails);
 
         if (paymentResponse.status === 201) {
           clearCart();
-          toast.success(
-            "Order created successfully and payment details saved!",
-            { position: "top-right" }
-          );
+          toast.success("Order created successfully and payment details saved!", { position: "top-right" });
         } else {
           console.error("Failed to save payment details");
-          toast.error("Failed to save payment details. Please try again.", {
-            position: "top-right",
-          });
+          toast.error("Failed to save payment details. Please try again.", { position: "top-right" });
         }
       } else {
         console.error("Failed to create order");
-        toast.error("Failed to create order. Please try again.", {
-          position: "top-right",
-        });
+        toast.error("Failed to create order. Please try again.", { position: "top-right" });
       }
     } catch (error) {
       console.error("Error creating order:", error);
-      toast.error("Error creating order. Please try again.", {
-        position: "top-right",
-      });
+      toast.error("Error creating order. Please try again.", { position: "top-right" });
+    }
+  };
+
+  //Promocode Entering
+  const handleApplyPromoCode = async () => {
+    try {
+      const response = await axios.post("/api/validate-promo-code", { promoCode });
+      if (response.data.success) {
+        setDiscount(response.data.discount);
+        toast.success("Promocode applied successfully!", {position: "top-right"});
+      } else {
+        setDiscount(0);
+        setPromoCode('');
+        toast.error("Invalid promo code. Promo code cleared.", { position: "top-right" });       
+      }
+    } catch (error) {
+      setPromoCode('');
+      console.error("Failed to apply promo code:", error);
+      toast.error("Failed to apply promo code. Please try again.", { position: "top-right" });
     }
   };
 

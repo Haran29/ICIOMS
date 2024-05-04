@@ -41,6 +41,11 @@ const PaymentManagerNavBar = () => {
               Generate Report
               </Link>
             </li>
+            <li>
+              <Link to="/CreatePromoCode" className="text-black hover:text-green-600">
+                Manage Promotions
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="flex items-center space-x-3 ml-auto relative">
