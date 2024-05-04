@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from 'uuid';
 import "react-toastify/dist/ReactToastify.css";
 import CartItem from "../component/CartItem";
 import CreditCardForm from "../component/CreditCardForm";
+import PayonDelivery from "../component/PayonDelivery";
 
 const CartPages = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -12,15 +13,18 @@ const CartPages = () => {
   const [postalCode, setPostalCode] = useState("");
   const [city, setCity] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Select Option");
   const [showCreditCardForm, setShowCreditCardForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [discount, setDiscount] = useState(0);
+  const [showPayonDelivery, setShowPayonDelivery] = useState(false);
 
   useEffect(() => {
     fetchCartItems();
   }, []);
 
-  //sennding request to fetchCartItems 
   const fetchCartItems = async () => {
     setIsLoading(true);
     try {
@@ -31,33 +35,39 @@ const CartPages = () => {
       }
     } catch (error) {
       console.error("Failed to fetch cart items:", error);
-      toast.error("Failed to fetch cart items. Please try again.", {
-        position: "top-right",
-      });
+      toast.error("Failed to fetch cart items. Please try again.", { position: "top-right" });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // updateQuanity 
+  //Promocode Entering
+  const handleApplyPromoCode = async () => {
+    try {
+      const response = await axios.post("/api/validate-promo-code", { promoCode });
+      if (response.data.success) {
+        setDiscount(response.data.discount);
+        toast.success("Promocode applied successfully!", {position: "top-right"});
+      } else {
+        setDiscount(0);
+        setPromoCode('');
+        toast.error("Invalid promo code. Promo code cleared.", { position: "top-right" });       
+      }
+    } catch (error) {
+      setPromoCode('');
+      console.error("Failed to apply promo code:", error);
+      toast.error("Failed to apply promo code. Please try again.", { position: "top-right" });
+    }
+  };
+  
   const updateQuantity = async (cartItemId, newQuantity) => {
     try {
-      //retriving avaible qty
-      const availableQuantityResponse = await axios.get(
-        `/items/${
-          cartItems.find((item) => item._id === cartItemId).itemId._id
-        }/availableQuantity`
-      );
+      const availableQuantityResponse = await axios.get(`/items/${cartItems.find(item => item._id === cartItemId).itemId._id}/availableQuantity`);
 
       const availableQuantity = availableQuantityResponse.data.quantity;
-      //chking if item is available
+
       if (newQuantity > availableQuantity) {
-        toast.error(
-          `Only ${availableQuantity} ${
-            cartItems.find((item) => item._id === cartItemId).itemId.name
-          } available.`,
-          { position: "top-right" }
-        );
+        toast.error(`Only ${availableQuantity} ${cartItems.find(item => item._id === cartItemId).itemId.name} available.`, { position: "top-right" });
         return;
       }
 
@@ -65,32 +75,24 @@ const CartPages = () => {
         toast.error("Quantity cannot be negative.", { position: "top-right" });
         return;
       }
-      //updating qty
+
       const response = await axios.put("/cart/updateQuantity", {
         cartItemId,
         quantity: newQuantity,
       });
 
       fetchCartItems();
-      toast.success("Quantity updated successfully!", {
-        position: "top-right",
-      });
+      toast.success("Quantity updated successfully!", { position: "top-right" });
     } catch (error) {
       console.error("Error updating quantity:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to update quantity. Please try again.",
-        {
-          position: "top-right",
-        }
-      );
+      toast.error(error.response?.data?.message || "Failed to update quantity. Please try again.", {
+        position: "top-right",
+      });
     }
   };
-
-  //remving a item in cart
+  
   const removeItem = async (cartItemId) => {
     try {
-      //sending requst to removing a item
       const response = await axios.delete("/cart/deleteItem", {
         data: { cartItemId },
       });
@@ -98,17 +100,12 @@ const CartPages = () => {
       toast.success("Item removed successfully!", { position: "top-right" });
     } catch (error) {
       console.error("Error removing item from cart:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to remove item from cart. Please try again.",
-        {
-          position: "top-right",
-        }
-      );
+      toast.error(error.response?.data?.message || "Failed to remove item from cart. Please try again.", {
+        position: "top-right",
+      });
     }
   };
 
-  //clear cart function
   const clearCart = async () => {
     try {
       const user = JSON.parse(sessionStorage.getItem("user"));
@@ -116,28 +113,38 @@ const CartPages = () => {
       fetchCartItems();
     } catch (error) {
       console.error("Error clearing cart:", error);
-      toast.error("Failed to clear cart. Please try again.", {
-        position: "top-right",
-      });
+      toast.error("Failed to clear cart. Please try again.", { position: "top-right" });
     }
   };
 
-  // calculate overroll total
   const calculateOverallTotal = () => {
     let total = 0;
     cartItems.forEach((cartItem) => {
       total += cartItem.quantity * cartItem.itemId.price;
     });
-    return total.toFixed(2);
+  
+    // Calculate the discounted total
+    const discountedTotal = total - (total * discount) / 100;
+  
+    // Return the discounted total rounded to 2 decimal places
+    return discountedTotal.toFixed(2);
   };
+  
 
-  // handlepayment function
   const handlePayment = () => {
     // Frontend validation
     if (!validateForm()) {
       return;
     }
+    const selectedPaymentMethod = document.getElementById("paymentMethod").value;
+
+    if (selectedPaymentMethod === "Card") {
     setShowCreditCardForm(true);
+
+    }else if (selectedPaymentMethod === "Cash"){
+    setShowPayonDelivery(true);
+    console.log("Pay On Delivery selected");
+    }
   };
 
   const validateForm = () => {
@@ -147,9 +154,7 @@ const CartPages = () => {
     }
 
     if (!/^(07)\d{8}$/.test(phoneNumber)) {
-      toast.error("Phone number must be 10 digits and start with '07'.", {
-        position: "top-right",
-      });
+      toast.error("Phone number must be 10 digits and start with '07'.", { position: "top-right" });
       return false;
     }
 
@@ -158,10 +163,14 @@ const CartPages = () => {
       return false;
     }
 
+    if (paymentMethod === "Select Option") {
+      toast.error("Please select a payment method.", { position: "top-right" });
+      return false;
+    }
+
     return true;
   };
 
-  //order creation function
   const createOrder = async () => {
     try {
       const user = JSON.parse(sessionStorage.getItem("user"));
@@ -172,6 +181,7 @@ const CartPages = () => {
         postalCode,
         city,
         streetAddress,
+        paymentMethod,
         items: cartItems.map((item) => ({
           itemId: item.itemId._id,
           name: item.itemId.name,
@@ -189,98 +199,62 @@ const CartPages = () => {
         // Generate a payment ID
         const paymentId = uuidv4();
 
-        console.log(response);
+        console.log(response)
 
         // Save payment details in payment table
         const paymentDetails = {
           paymentId,
           userId: user._id,
-          orderId: response.data.orderId,
+          orderId: response.data.orderId, 
           status: "completed",
-          Method: "Card",
+          Method : paymentMethod,
           amount: calculateOverallTotal(),
         };
 
-        const paymentResponse = await axios.post(
-          "/payments/create",
-          paymentDetails
-        );
+        const paymentResponse = await axios.post("/payments/create", paymentDetails);
 
         if (paymentResponse.status === 201) {
           clearCart();
-          toast.success(
-            "Order created successfully and payment details saved!",
-            { position: "top-right" }
-          );
+          toast.success("Order created successfully and payment details saved!", { position: "top-right" });
         } else {
           console.error("Failed to save payment details");
-          toast.error("Failed to save payment details. Please try again.", {
-            position: "top-right",
-          });
+          toast.error("Failed to save payment details. Please try again.", { position: "top-right" });
         }
       } else {
         console.error("Failed to create order");
-        toast.error("Failed to create order. Please try again.", {
-          position: "top-right",
-        });
+        toast.error("Failed to create order. Please try again.", { position: "top-right" });
       }
     } catch (error) {
       console.error("Error creating order:", error);
-      toast.error("Error creating order. Please try again.", {
-        position: "top-right",
-      });
+      toast.error("Error creating order. Please try again.", { position: "top-right" });
     }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <ToastContainer />
-      {showCreditCardForm && (
-        <CreditCardForm
-          onClose={() => setShowCreditCardForm(false)}
-          createOrder={createOrder}
-        />
-      )}
+      {showCreditCardForm && <CreditCardForm onClose={() => setShowCreditCardForm(false)} createOrder={createOrder} />}     
+      {showPayonDelivery && <PayonDelivery onClose={() => setShowPayonDelivery(false)} createOrder={createOrder} />}
       {showConfirmationModal && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity">
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-            &#8203;
-            <div
-              className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="modal-headline"
-            >
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen"></span>&#8203;
+            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
               <div>
                 <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                  <h3
-                    className="text-lg leading-6 font-medium text-gray-900"
-                    id="modal-headline"
-                  >
+                  <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
                     Are you sure you want to clear your cart?
                   </h3>
                 </div>
               </div>
               <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                <button
-                  onClick={() => {
-                    setShowConfirmationModal(false);
-                    clearCart();
-                  }}
-                  type="button"
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                >
+                <button onClick={() => {setShowConfirmationModal(false); clearCart();}} type="button" className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
                   Clear Cart
                 </button>
-                <button
-                  onClick={() => setShowConfirmationModal(false)}
-                  type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
-                >
+                <button onClick={() => setShowConfirmationModal(false)} type="button" className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
                   Cancel
                 </button>
               </div>
@@ -303,6 +277,18 @@ const CartPages = () => {
               />
             ))}
 
+            <div>
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+                placeholder="Enter promo code"
+              />
+              <button onClick={handleApplyPromoCode} className="px-4 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-small">
+                Apply</button>
+                {discount > 0 && <p>Discount applied: {discount}%</p>}
+            </div>
+
             <div className="mt-8 border-t pt-6">
               <h3 className="text-xl font-semibold mb-4">Checkout</h3>
               <div className="mb-4">
@@ -321,13 +307,7 @@ const CartPages = () => {
                     if (/^[0-9]{0,10}$/.test(value)) {
                       setPhoneNumber(value);
                     }
-                  }}onBlur={() => {
-                    if (!/^(07)\d{8}$/.test(phoneNumber)) {
-                      toast.error("Phone number must be 10 digits and start with '07'.", {
-                        position: "top-right",
-                      });
-                      setPhoneNumber("");
-                  }}}
+                  }}
                   className="input"
                   placeholder="Phone Number"
                   required
@@ -346,15 +326,10 @@ const CartPages = () => {
                   value={postalCode}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (/^[0-9]{0,5}$/.test(value)) {
+                    if (/^[0-9]{0,5}$/.test(value)){
                       setPostalCode(value);
                     }
-                  }}
-                  onBlur={() => {
-                    if (!/^[0-9]{5}/.test(postalCode)) {
-                      toast.error("Postal code must be 5 digits.", { position: "top-right" });
-                      setPostalCode("");
-                    }
+                    
                   }}
                   className="input"
                   placeholder="Postal Code"
@@ -395,34 +370,47 @@ const CartPages = () => {
                   required
                 />
               </div>
-            </div>
-            <div className="flex justify-end mt-4 space-x-4">
+              <div className="mb-4">
+                <label
+                  htmlFor="paymentMethod"
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  Payment Method
+                </label>
+                <select
+                  id="paymentMethod"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  className="input"
+                  required
+                >
+                  <option value="Select Option" className="text-gray-400" >Select Option</option>
+                  <option value="Card">Card Payment</option>
+                  <option value="Cash">Pay on Delivery</option>
+                </select>
+              </div>
+              <div className="flex justify-end mt-4 space-x-4">
               <button
                 onClick={() => setShowConfirmationModal(true)}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg"
-              >
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg">
                 Clear Cart
               </button>
               <button
                 onClick={handlePayment}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg"
-              >
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-lg">
                 Pay
               </button>
+              </div>
+              <div className="mt-4 text-right">
+            <p className="text-xl font-semibold">
+            Overall Total: LKR {calculateOverallTotal()}
+            </p>
             </div>
-            <div className="mt-4 text-right">
-              <p className="text-xl font-semibold">
-                Overall Total: LKR {calculateOverallTotal()}
-              </p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="text-center">
-          <p className="text-gray-600">
-            Your cart is empty. Add products to your cart.
-          </p>
-        </div>
+        <div>Your cart is empty!</div>
       )}
     </div>
   );
