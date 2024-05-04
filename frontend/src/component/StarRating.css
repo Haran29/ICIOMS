@@ -1,0 +1,6 @@
+/* src/components/StarRating.css */
+span {
+    cursor: pointer;
+    font-size: 24px;
+    color: gold;
+  }  

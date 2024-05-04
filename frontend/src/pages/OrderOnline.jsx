@@ -13,7 +13,12 @@ const OrderOnline = () => {
   const [userOrderHistory, setUserOrderHistory] = useState([]);
   const [allowedLocation, setAllowedLocation] = useState(false);
 
+ 
+
+
+
   useEffect(() => {
+   
     fetchMenuItems();
     const user = JSON.parse(sessionStorage.getItem("user"));
     if (user && user._id) {
@@ -169,11 +174,11 @@ const OrderOnline = () => {
         const userLatitude = position.coords.latitude;
         const userLongitude = position.coords.longitude;
 
-        const mataleDistrictLatitude = 7.46666;
-        const mataleDistrictLongitude = 80.61666;
+        //const mataleDistrictLatitude = 7.46666;
+        //const mataleDistrictLongitude = 80.61666;
 
-        //const mataleDistrictLatitude = 6.9270;
-        //const mataleDistrictLongitude = 79.8617;
+        const mataleDistrictLatitude = 6.9270;
+        const mataleDistrictLongitude = 79.8617;
 
         const latitudeTolerance = 0.1;
         const longitudeTolerance = 0.1;
