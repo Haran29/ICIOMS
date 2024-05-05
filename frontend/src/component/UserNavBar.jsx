@@ -86,6 +86,11 @@ const UserNavBar = () => {
                     </Link>
                   </li>
                   <li>
+                    <Link to="/PaymentList" className="block px-4 py-2 text-black hover:bg-gray-200">
+                     Feedbacks
+                    </Link>
+                  </li>
+                  <li>
                     <Link to="/ManageProfile" className="block px-4 py-2 text-black hover:bg-gray-200">
                       Manage Profile
                     </Link>
