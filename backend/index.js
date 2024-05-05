@@ -11,6 +11,8 @@ const mongoose = require("mongoose");
 require('dotenv').config();
 const cookieParser = require("cookie-parser");
 const mongoUrl = process.env.MONGO_URL;
+const  SupplierRoutes = require("./routes/SupplierRoutes")
+const SupplierOrderRoutes = require("./routes/SupplierOrderRoutes")
 
 
 
@@ -46,7 +48,8 @@ app.use("/", authRoutes);
 app.use("/Savindi", UserRoutes);
 app.use("/Shakya", itemRoutes);
 app.use("/api/products", productRoute);
-
+app.use("/api/supplier",SupplierRoutes)
+app.use("/api/supplier-order",SupplierOrderRoutes)
 
 
 
