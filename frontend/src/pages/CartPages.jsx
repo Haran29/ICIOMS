@@ -261,6 +261,7 @@ const CartPages = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <ToastContainer />
+      {showPayonDelivery && <PayonDelivery onClose={() => setShowPayonDelivery(false)} createOrder={createOrder} />}
       {showCreditCardForm && (
         <CreditCardForm
           onClose={() => setShowCreditCardForm(false)}
@@ -328,6 +329,17 @@ const CartPages = () => {
                 removeItem={removeItem}
               />
             ))}
+            <div>
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+                placeholder="Enter promo code"
+              />
+              <button onClick={handleApplyPromoCode} className="px-4 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:bg-green-700 text-small">
+                Apply</button>
+                {discount > 0 && <p>Discount applied: {discount}%</p>}
+            </div>
 
             <div className="mt-8 border-t pt-6">
               <h3 className="text-xl font-semibold mb-4">Checkout</h3>
@@ -420,6 +432,25 @@ const CartPages = () => {
                   placeholder="Street Address"
                   required
                 />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="paymentMethod"
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  Payment Method
+                </label>
+                <select
+                  id="paymentMethod"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  className="input"
+                  required
+                >
+                  <option value="Select Option" className="text-gray-400" >Select Option</option>
+                  <option value="Card">Card Payment</option>
+                  <option value="Cash">Cash on Delivery</option>
+                </select>
               </div>
             </div>
             <div className="flex justify-end mt-4 space-x-4">

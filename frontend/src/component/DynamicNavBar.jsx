@@ -8,6 +8,7 @@ import PaymentManagerNavBar from "./PaymentManagerNavBar";
 import SalesPersonNavBar from "./SalesPersonNavBar";
 import QMNavBar from "./QMNavBar";
 import UserManagerNavBar from "./UserManagerNavBar";
+import SupplierManager from "./SupplierNavBar/SupplierNavBar";
 
 const DynamicNavBar = () => {
   const [user, setUser] = useState(null);
@@ -43,8 +44,10 @@ const DynamicNavBar = () => {
     }else if (user.role === "UserManager") {
       return <UserManagerNavBar />; 
       
-    } else if (user.name === "Christy") {
+    } else if (user.role === "QualityManager") {
       return <QMNavBar />;
+    }else if (user.role === "SupplierManager") {
+      return <SupplierManager />;
     }else {
       return <UserNavBar />; 
     }

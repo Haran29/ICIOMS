@@ -115,6 +115,7 @@ const Admindash = () => {
                       <option value="user">User</option>
                       <option value="salesperson">Salesperson</option>
                       <option value="salesperson_manager">Salesperson Manager</option>
+                      <option value="UserManager">User Manager</option>
                     </select>
                   </td>
                   <td className="px-4 py-2">
