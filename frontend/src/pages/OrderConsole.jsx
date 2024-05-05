@@ -4,6 +4,8 @@ import { FaTrashAlt, FaSearch } from "react-icons/fa";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import BillModal from "../component/BillModal";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const OrderConsole = () => {
   const [inventory, setInventory] = useState([]);
@@ -82,7 +84,7 @@ const OrderConsole = () => {
   const generateBill = async () => {
     try {
       const orderData = {
-        orderId: new Date().getTime(), 
+        orderId: new Date().getTime(),
         items: selectedItems.map((item) => ({
           itemId: item._id,
           name: item.name,
@@ -114,6 +116,7 @@ const OrderConsole = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <ToastContainer />
       <div className="max-w-5xl w-full p-8 bg-white rounded-lg shadow-lg">
         <div className="flex justify-between">
           <div className="w-3/5 pr-8">
@@ -133,7 +136,15 @@ const OrderConsole = () => {
                 <div
                   key={item._id}
                   className="flex flex-col items-center cursor-pointer"
-                  onClick={() => addToSelectedItems(item._id)}
+                  onClick={() => {
+                    if (item.quantity > 0) {
+                      addToSelectedItems(item._id);
+                    } else {
+                      toast.error("out stock", {
+                        position: "top-right",
+                      });
+                    }
+                  }}
                 >
                   <img
                     src={item.image}
@@ -144,7 +155,9 @@ const OrderConsole = () => {
                     <h3 className="text-lg font-semibold">{item.name}</h3>
                     <p className="text-gray-600">
                       LKR {item.price} |
-                      {item.quantity == 0 ? "Out of Stock" : ` Qty ${item.quantity}`}
+                      {item.quantity == 0
+                        ? "Out of Stock"
+                        : ` Qty ${item.quantity}`}
                     </p>
                   </div>
                 </div>

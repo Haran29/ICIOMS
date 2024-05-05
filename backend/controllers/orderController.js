@@ -5,7 +5,6 @@ const nodemailer = require("nodemailer");
 const User = require("../models/user");
 const Item = require("../models/item");
 
-
 //creating transporter object
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -180,7 +179,7 @@ const updateStatus = async (req, res) => {
     }
 
     const userEmail = user.email;
-//sending mail only if status is completed
+    //sending mail only if status is completed
     if (status === "completed") {
       const mailOptions = {
         from: "vinoicecream@gmail.com",
@@ -253,7 +252,7 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-//creating and saving offline 
+//creating and saving offline
 const saveOfflineOrder = async (req, res) => {
   try {
     const { orderId, items, totalAmount } = req.body;
@@ -356,7 +355,7 @@ const updateOfflineOrder = async (req, res) => {
   try {
     const orderId = req.params.id;
     const status = req.body;
-    console.log(orderId,status)
+    console.log(orderId, status);
     const updatedOrder = await OfflineOrder.updateOne(
       { _id: orderId },
       { status }
@@ -366,12 +365,10 @@ const updateOfflineOrder = async (req, res) => {
       return res.status(404).json({ error: "Order not found" });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Order status updated successfully",
-        order: updatedOrder,
-      });
+    res.status(200).json({
+      message: "Order status updated successfully",
+      order: updatedOrder,
+    });
   } catch (error) {
     console.error("Error updating order status:", error);
     res.status(500).json({ error: "Internal server error" });

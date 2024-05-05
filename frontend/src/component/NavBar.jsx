@@ -47,7 +47,7 @@ const NavBar = () => {
             </svg>
           </button>
         </div>
-        <div className={`md:flex ${isOpen ? 'block' : 'hidden'}`}>
+        <div className={`md:flex ${isOpen ? "block" : "hidden"}`}>
           <ul className="font-medium flex flex-col md:flex-row md:space-x-8 md:space-y-0 mt-4 md:mt-0">
             <li>
               <Link to="/OurMenu" className="text-black hover:text-green-600">
@@ -55,29 +55,26 @@ const NavBar = () => {
               </Link>
             </li>
             <li>
-              <Link to="#" className="text-black hover:text-green-600">
+              <Link to="/AboutUS" className="text-black hover:text-green-600">
                 About Us
               </Link>
             </li>
             <li>
-              <Link
-                to="#"
-                className="text-black hover:text-green-600"
-              >
+              <Link to="/AboutUS" className="text-black hover:text-green-600">
                 Contact Us
               </Link>
             </li>
           </ul>
         </div>
         <div className="hidden md:flex items-center space-x-4">
-          <Link 
-            to="/SignUpPage" 
+          <Link
+            to="/SignUpPage"
             className="text-white bg-green-600 px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 ease-in-out"
           >
             Sign Up
           </Link>
-          <Link 
-            to="/LoginPage" 
+          <Link
+            to="/LoginPage"
             className="text-white bg-green-600 px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 ease-in-out"
           >
             Sign In

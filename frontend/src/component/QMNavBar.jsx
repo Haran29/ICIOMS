@@ -76,20 +76,17 @@ const QMNavBar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/our-menu" className="text-black hover:text-green-600">
+              <Link to="/Menu" className="text-black hover:text-green-600">
                 Our Menu
               </Link>
             </li>
             <li>
-              <Link
-                to="/contact-us"
-                className="text-black hover:text-green-600 "
-              >
+              <Link to="/AboutUS" className="text-black hover:text-green-600 ">
                 Contact Us
               </Link>
             </li>
             <li>
-              <Link to="/about-us" className="text-black hover:text-green-600 ">
+              <Link to="/AboutUS" className="text-black hover:text-green-600 ">
                 About Us
               </Link>
             </li>

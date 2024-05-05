@@ -9,7 +9,7 @@ const SupplierNavBar = () => {
   };
 
   return (
-    <nav className="bg-white bg-opacity-70 backdrop-blur-lg shadow-lg rounded-lg">
+    <nav className="bg-white bg-opacity-70 backdrop-blur-lg shadow-lg rounded-lg mb-10">
       <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
         <div className="md:hidden">
           <button
@@ -40,16 +40,22 @@ const SupplierNavBar = () => {
             </svg>
           </button>
         </div>
-        <div className={`md:flex ${isOpen ? 'block' : 'hidden'}`}>
+        <div className={`md:flex ${isOpen ? "block" : "hidden"}`}>
           <ul className="font-medium flex flex-col md:flex-row md:space-x-8 md:space-y-0 mt-4 md:mt-0">
             <li>
-              <Link to="/list-suplier" className="text-black hover:text-green-600">
-                Suplier
+              <Link
+                to="/list-suplier"
+                className="text-black hover:text-green-600"
+              >
+                Supplier
               </Link>
             </li>
             <li>
-              <Link to="/place-order" className="text-black hover:text-green-600">
-              PlaceOrder
+              <Link
+                to="/place-order"
+                className="text-black hover:text-green-600"
+              >
+                Place Order
               </Link>
             </li>
             <li>
@@ -70,7 +76,6 @@ const SupplierNavBar = () => {
             </li>
           </ul>
         </div>
-        
       </div>
     </nav>
   );
