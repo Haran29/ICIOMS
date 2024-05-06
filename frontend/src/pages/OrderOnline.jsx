@@ -35,6 +35,7 @@ const OrderOnline = () => {
     }
   }, [userId]);
 
+  //Personalized Recommendation
   useEffect(() => {
     const itemFrequency = {};
     userOrderHistory.forEach((order) => {
@@ -167,7 +168,7 @@ const OrderOnline = () => {
       console.error("Error removing item from the database:", error);
     }
   };
-
+//for location-specific access. 
   const checkLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
