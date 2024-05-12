@@ -206,7 +206,6 @@ export default function UpdateBatch() {
 
   return (
     <>
-    <QMNavBar/>
     <div
       className="container max-w-full max-h-full"
       style={{
